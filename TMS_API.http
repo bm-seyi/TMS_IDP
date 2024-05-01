@@ -1,0 +1,8 @@
+POST http://localhost:5188/Registration/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "seyiadeyemi@software.co.uk",
+    "Pwd": "Dark"
+}
