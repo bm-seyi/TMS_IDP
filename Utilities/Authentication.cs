@@ -37,4 +37,21 @@ public class Auth
         }
         
     }
+
+    private static string GenerateKey()
+    {
+        byte[] storage = new byte[32];
+
+        using (var generator = RandomNumberGenerator.Create())
+        {
+            generator.GetBytes(storage);
+        }
+
+        string key = Convert.ToBase64String(storage)
+        .Replace("+", "-")
+        .Replace("/", "_")
+        .TrimEnd('=');
+
+       return "TMS-" + key;
+    }
 }
