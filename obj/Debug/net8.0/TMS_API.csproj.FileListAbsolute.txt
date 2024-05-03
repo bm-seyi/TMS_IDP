@@ -138,3 +138,4 @@ c:\Users\User\OneDrive\Code\Tram Management System\TMS_API\obj\Debug\net8.0\TMS_
 c:\Users\User\OneDrive\Code\Tram Management System\TMS_API\obj\Debug\net8.0\ref\TMS_API.dll
 c:\Users\User\OneDrive\Code\Tram Management System\TMS_API\bin\Debug\net8.0\Konscious.Security.Cryptography.Argon2.dll
 c:\Users\User\OneDrive\Code\Tram Management System\TMS_API\bin\Debug\net8.0\Konscious.Security.Cryptography.Blake2.dll
+c:\Users\User\OneDrive\Code\Tram Management System\TMS_API\obj\Debug\net8.0\TMS_API.sourcelink.json

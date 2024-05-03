@@ -8,16 +8,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
+app.UseHttpsRedirection();
+app.UseMiddleware<TMS_API.Middleware.ApiMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
 }
 
-app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
