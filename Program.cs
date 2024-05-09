@@ -4,21 +4,22 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string tokenPolicy =  "token";
 var myOptions = new TMS_API.Middleware.RateLimiting.ApiRateLimitSettings();
 builder.Configuration.GetSection("ApiRateLimitSettings").Bind(myOptions);
 
-builder.Services.AddRateLimiter(_ => _
-    .AddTokenBucketLimiter(policyName: tokenPolicy, options =>
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = 429;
+    options.AddTokenBucketLimiter(policyName: "TokenPolicy", configureOptions: tokenOptions =>
     {
-        options.TokenLimit = myOptions.TokenLimit;
-        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        options.QueueLimit = myOptions.QueueLimit;
-        options.ReplenishmentPeriod = TimeSpan.FromSeconds(myOptions.ReplenishmentPeriod);
-        options.TokensPerPeriod = myOptions.TokensPerPeriod;
-        options.AutoReplenishment = myOptions.AutoReplenishment;
-        
-    }));
+        tokenOptions.TokenLimit = myOptions.TokenLimit; 
+        tokenOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; 
+        tokenOptions.QueueLimit = myOptions.QueueLimit;
+        tokenOptions.ReplenishmentPeriod = TimeSpan.FromSeconds(myOptions.ReplenishmentPeriod);
+        tokenOptions.TokensPerPeriod = myOptions.TokensPerPeriod;
+        tokenOptions.AutoReplenishment = myOptions.AutoReplenishment;
+    });
+});
 // Add services to the container.
 
 builder.Services.AddControllers();

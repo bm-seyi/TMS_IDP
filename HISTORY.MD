@@ -6,3 +6,6 @@ API now uses API Keys for authentication, which is done by using middleware. A u
 
 ## 0.0.3
 Token Bucket rate limiting has been configured in the program.cs. Changes has been made to various files to support this. Currently the rate limiting has only been applied to the Authentication endpoint. 
+
+## 0.0.4
+Token bucket configuration readability and maintainability has been improved. Also one the rate limit has been succeeded the correct error code is returned. 

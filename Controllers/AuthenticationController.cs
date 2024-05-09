@@ -17,11 +17,10 @@ public class AuthenticationController : ControllerBase
         _logger = logger;
     }
 
-    [EnableRateLimiting("token")]
+    [EnableRateLimiting("TokenPolicy")]
     [HttpPost]
     public IActionResult Post([FromBody] TMS_APP data)
     {
-
         try
         {
             (byte[] pwdhash, byte[] salt) = DatabaseActions.UserAuthetication(data.email);
@@ -35,6 +34,5 @@ public class AuthenticationController : ControllerBase
             Console.WriteLine(ex.Message);
             return BadRequest();
         }
-
     }
 }
