@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using TMS_API.Utilities;
 using System.Linq;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace TMS_API.Controllers;
 
@@ -16,6 +17,7 @@ public class AuthenticationController : ControllerBase
         _logger = logger;
     }
 
+    [EnableRateLimiting("token")]
     [HttpPost]
     public IActionResult Post([FromBody] TMS_APP data)
     {

@@ -1,8 +1,8 @@
-POST http://localhost:5188/Registration/
+POST http://localhost:5188/Authentication/
 Accept: application/json
 Content-Type: application/json
 
 {
-    "email": "seyiadeyemi@software.co.uk",
-    "Pwd": "Dark"
+    "email": "seyiadeyemi@metrolink.com",
+    "Pwd": "Black"
 }
