@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using TMS_API.Utilities;
 using System.Linq;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace TMS_API.Controllers;
 
@@ -16,10 +17,10 @@ public class AuthenticationController : ControllerBase
         _logger = logger;
     }
 
+    [EnableRateLimiting("TokenPolicy")]
     [HttpPost]
     public IActionResult Post([FromBody] TMS_APP data)
     {
-
         try
         {
             (byte[] pwdhash, byte[] salt) = DatabaseActions.UserAuthetication(data.email);
@@ -33,6 +34,5 @@ public class AuthenticationController : ControllerBase
             Console.WriteLine(ex.Message);
             return BadRequest();
         }
-
     }
 }
