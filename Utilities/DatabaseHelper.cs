@@ -13,54 +13,70 @@ public class DatabaseActions
     }
 
 
-    public static void UserRegistration(string email, byte[] pwdhash, byte[] salt)
+    public static int UserRegistration(string email, byte[] pwdhash, byte[] salt)
     {
-        using (SqlConnection connection = new SqlConnection(connectionString))
-        { 
-            string sql_query = "INSERT INTO [dbo].[hashed] ([email], [pwdhash], [salt]) VALUES (@Value1, @Value2, @Value3)";
-            connection.Open();
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            { 
+                string sql_query = "INSERT INTO [dbo].[hashed] ([email], [pwdhash], [salt]) VALUES (@Value1, @Value2, @Value3)";
+                connection.Open();
 
-            using (SqlCommand command = new SqlCommand(sql_query, connection)) 
-            {
-                command.Parameters.AddWithValue("@Value1", email);
-                command.Parameters.AddWithValue("@Value2", pwdhash);
-                command.Parameters.AddWithValue("@Value3", salt);
+                using (SqlCommand command = new SqlCommand(sql_query, connection)) 
+                {
+                    command.Parameters.AddWithValue("@Value1", email);
+                    command.Parameters.AddWithValue("@Value2", pwdhash);
+                    command.Parameters.AddWithValue("@Value3", salt);
 
-                int rowsAffected = command.ExecuteNonQuery();
+                    int rowsAffected = command.ExecuteNonQuery();
+                }
+                
+                connection.Close();
             }
+
+            return 1;
             
-            connection.Close();
+        } catch (Exception)
+        {
+            return -1;
         }
     }
 
-    public static (byte[] pwdhash, byte[] salt) UserAuthetication(string email)
+    public static (byte[]? pwdhash, byte[]? salt) UserAuthetication(string email)
     {
-        if(string.IsNullOrEmpty(email))
+        try
         {
-            throw new ArgumentException("Email must not be null or empty", nameof(email));
-        }
-
-        using (SqlConnection connection = new SqlConnection(connectionString))
-        {
-            const string sql_query = "SELECT [pwdhash], [salt] FROM [dbo].[hashed] WHERE [email] = @Value1";
-            connection.Open();
-
-            using (SqlCommand command = new SqlCommand(sql_query, connection))
+            if(string.IsNullOrEmpty(email))
             {
-                command.Parameters.AddWithValue("@Value1", email);
-                using (SqlDataReader reader = command.ExecuteReader())
+                throw new ArgumentException("Email must not be null or empty", nameof(email));
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                const string sql_query = "SELECT [pwdhash], [salt] FROM [dbo].[hashed] WHERE [email] = @Value1";
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand(sql_query, connection))
                 {
-                   if (reader.Read())
-                   {
-                        byte[] hashedpwd = reader["pwdhash"] as byte[] ?? throw new ArgumentNullException();
-                        byte[] salt = reader["salt"] as byte[] ?? throw new ArgumentNullException();
-                        return (hashedpwd, salt);
-                   } else
-                   {
-                     throw new InvalidOperationException("No user found with the specified email.");
-                   }
+                    command.Parameters.AddWithValue("@Value1", email);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                    if (reader.Read())
+                    {
+                            byte[] hashedpwd = reader["pwdhash"] as byte[] ?? throw new ArgumentNullException();
+                            byte[] salt = reader["salt"] as byte[] ?? throw new ArgumentNullException();
+                            return (hashedpwd, salt);
+                    } else
+                    {
+                        throw new InvalidOperationException("No user found with the specified email.");
+                    }
+                    }
                 }
             }
+        } catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return (null, null);
         }
     }
 

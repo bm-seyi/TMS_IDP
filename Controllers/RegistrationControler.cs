@@ -18,17 +18,16 @@ public class RegistrationController : ControllerBase
     [HttpPost]
     public IActionResult Post([FromBody] TMS_APP data)
     {
-
         try
         {
-            byte[] salt = Auth.GenerateSalt();
-            byte[] hashedpwd = Auth.passwordHasher(data.pwd, salt);
-            DatabaseActions.UserRegistration(data.email, hashedpwd, salt);
-            return Ok();
-        } catch (SqlException ex)
+            Auth Authenticate = new Auth();
+            byte[] salt = Authenticate.GenerateSalt();
+            byte[] hashedpwd = Authenticate.passwordHasher(data.pwd, salt);
+            int status = DatabaseActions.UserRegistration(data.email, hashedpwd, salt);
+            return (status != -1) ? Ok() : StatusCode(500, "Interal Server Error");
+        } catch (Exception)
         {   
-            Console.WriteLine(ex.Message);
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal Server Error");
         }
 
     }

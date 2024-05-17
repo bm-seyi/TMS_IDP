@@ -9,3 +9,6 @@ Token Bucket rate limiting has been configured in the program.cs. Changes has be
 
 ## 0.0.4
 Token bucket configuration readability and maintainability has been improved. Also one the rate limit has been succeeded the correct error code is returned. 
+
+## 0.0.5
+Various changes have been made to improve code readability and maintainability. Also error handling has been added to various methods. 
