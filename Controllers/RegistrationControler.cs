@@ -9,26 +9,34 @@ namespace TMS_API.Controllers;
 public class RegistrationController : ControllerBase
 {
     private readonly ILogger<RegistrationController> _logger;
+    private readonly IDatabaseActions _databaseActions;
 
-    public RegistrationController(ILogger<RegistrationController> logger)
+    public RegistrationController(ILogger<RegistrationController> logger, IDatabaseActions databaseActions)
     {
         _logger = logger;
+        _databaseActions = databaseActions;
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody] TMS_APP data)
+    public async Task<IActionResult> Post([FromBody] TMS_APP data)
     {
-
         try
         {
-            byte[] salt = Auth.GenerateSalt();
-            byte[] hashedpwd = Auth.passwordHasher(data.pwd, salt);
-            DatabaseActions.UserRegistration(data.email, hashedpwd, salt);
-            return Ok();
-        } catch (SqlException ex)
+            Auth Authenticate = new Auth();
+            byte[] salt = Authenticate.GenerateSalt();
+            byte[] hashedpwd = Authenticate.passwordHasher(data.pwd, salt);
+            int status = await _databaseActions.UserRegistration(data.email, hashedpwd, salt);
+            return (status != -1) ? Ok() : StatusCode(500, "Internal Server Error");
+
+        } 
+        catch (Exception ex)
         {   
-            Console.WriteLine(ex.Message);
-            return BadRequest(ex.Message);
+            _logger.LogError("Error Message, {message}", ex.Message);
+            if (ex.InnerException != null)
+            {
+                _logger.LogError("Inner Exception: {message}", ex.InnerException.Message);
+            }
+            return StatusCode(500, "Internal Server Error");
         }
 
     }

@@ -11,7 +11,7 @@ public class Auth
     private const int iterations = 10;
     private const int storage = 64;
 
-    public static byte[] GenerateSalt()
+    public byte[] GenerateSalt()
     { 
         var buffer = new byte[storage];
 
@@ -22,7 +22,7 @@ public class Auth
         return buffer;
     }
 
-    public static byte[] passwordHasher(string password, byte[] salt)
+    public byte[] passwordHasher(string password, byte[] salt)
     {
         using (var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password)))
         {
@@ -38,7 +38,7 @@ public class Auth
         
     }
 
-    private static string GenerateKey()
+    private string GenerateKey()
     {
         byte[] storage = new byte[32];
 

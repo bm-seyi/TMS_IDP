@@ -11,28 +11,44 @@ namespace TMS_API.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
+    private readonly IDatabaseActions _databaseActions;
 
-    public AuthenticationController(ILogger<AuthenticationController> logger)
+    public AuthenticationController(ILogger<AuthenticationController> logger, IDatabaseActions databaseActions)
     {
         _logger = logger;
+        _databaseActions = databaseActions;
     }
 
     [EnableRateLimiting("TokenPolicy")]
     [HttpPost]
-    public IActionResult Post([FromBody] TMS_APP data)
+    public async Task<IActionResult> Post([FromBody] TMS_APP data)
     {
         try
         {
-            (byte[] pwdhash, byte[] salt) = DatabaseActions.UserAuthetication(data.email);
+            (byte[]? pwdhash, byte[]? salt) = await _databaseActions.UserAuthentication(data.email);
 
-            byte[] hashedpwd = Auth.passwordHasher(data.pwd, salt);
+            if (pwdhash != null && salt != null)
+            {
+                Auth Authentication = new Auth();
+                byte[] hashedpwd = Authentication.passwordHasher(data.pwd, salt);
+                return pwdhash.SequenceEqual(hashedpwd) ? Ok(): Unauthorized();
+            } 
+            else 
+            {
+                _logger.LogWarning("The hashed password and/or salt returned null");
+                return BadRequest();
+            }
 
-            return pwdhash.SequenceEqual(hashedpwd) ? Ok() : BadRequest("Password Don't Match");
-
-        } catch (SqlException ex)
+        } 
+        catch (Exception ex)
         {   
-            Console.WriteLine(ex.Message);
-            return BadRequest();
+            _logger.LogError("Error Message, {message}", ex.Message);
+
+            if (ex.InnerException != null)
+            {
+                _logger.LogError("Inner Exception: {message}", ex.InnerException.Message);
+            }
+            return StatusCode(500, "Internal Server Error");
         }
     }
 }

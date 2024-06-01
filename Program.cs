@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.RateLimiting;
 using TMS_API.Middleware;
 using System.Threading.RateLimiting;
+using TMS_API.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
+
+// Ensure logging services are added
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 var app = builder.Build();
 DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
