@@ -12,3 +12,6 @@ Token bucket configuration readability and maintainability has been improved. Al
 
 ## 0.0.5
 Various changes have been made to improve code readability and maintainability. Also error handling has been added to various methods. 
+
+## 0.0.6
+Dependency Injection is now used to query the database. The relevant scripts have been updated to support this. 
