@@ -15,3 +15,6 @@ Various changes have been made to improve code readability and maintainability. 
 
 ## 0.0.6
 Dependency Injection is now used to query the database. The relevant scripts have been updated to support this. 
+
+## 0.0.7
+API key header has been updated. 

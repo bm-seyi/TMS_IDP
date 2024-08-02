@@ -26,7 +26,6 @@ public class AuthenticationController : ControllerBase
         try
         {
             (byte[]? pwdhash, byte[]? salt) = await _databaseActions.UserAuthentication(data.email);
-
             if (pwdhash != null && salt != null)
             {
                 Auth Authentication = new Auth();
