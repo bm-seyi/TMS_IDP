@@ -6,7 +6,7 @@ namespace TMS_API.Middleware;
 public class ApiMiddleware
 {
     private readonly RequestDelegate _next;
-    private const string API_HEADER = "X-API-Key";
+    private const string API_HEADER = "X-API-KEY";
     
     public ApiMiddleware(RequestDelegate next)
     {
@@ -17,7 +17,7 @@ public class ApiMiddleware
     {
         if (!context.Request.Headers.TryGetValue(API_HEADER, out var extractedAPIKey) || string.IsNullOrWhiteSpace(extractedAPIKey))
         {
-            context.Response.StatusCode = 401; //Unauthorised
+            context.Response.StatusCode = 401; //Unauthorized
             return;
         }
 

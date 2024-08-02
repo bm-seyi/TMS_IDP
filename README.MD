@@ -1,18 +1,28 @@
 # Tram Management System - API
-### Description
 
-This API is to deal with requests made from the TMS app.
+## Description
 
-## Support
-For Support please email seyiadeyemi34@outlook.com
+The Tram Management System (TMS) API is designed to handle requests and provide services for the TMS app. It facilitates communication between the app and backend systems, ensuring smooth operation and data management.
+
+## Features
+
+- Request handling for the TMS app
+- Data retrieval and manipulation
+- Secure access control
 
 ## Roadmap
-- API Keys
-- CRUD
 
+- **OAuth Implementation:** Secure authentication and authorization for users.
+- **Session Management:** Efficient management of user sessions and state.
+
+## Support
+
+For support, please contact us via email at [seyiadeyemi34@outlook.com](mailto:seyiadeyemi34@outlook.com).
 
 ## Contributing
-Please email seyiadeyemi34@outlook.com if you would like to contribute. 
+
+If you're interested in contributing to this project, please reach out via [seyiadeyemi34@outlook.com](mailto:seyiadeyemi34@outlook.com).
 
 ## License
-Big Man Seyi Licensed
+
+This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
