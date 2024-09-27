@@ -1,8 +1,12 @@
-POST http://localhost:5188/Authentication/
+POST http://localhost:5188/api/auth/token/
 Accept: application/json
 Content-Type: application/json
+x-api-key: 
 
 {
-    "email": "seyiadeyemi@metrolink.com",
-    "Pwd": "Black"
+    "Email": "",
+    "Password": "",
+    "ClientId": "",
+    "ClientSecret": "",
+    "GrantType": ""
 }

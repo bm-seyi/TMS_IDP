@@ -18,3 +18,6 @@ Dependency Injection is now used to query the database. The relevant scripts hav
 
 ## 0.0.7
 API key header has been updated. 
+
+## 0.1.0
+Various additional methods, classes and scripts have been created to support JWT Tokens for the API. Also multiple methods have been redone to improve efficiency. Authentication endpoint has changed due to the JWT changes. Additional validations have been added to models. Environments variables are able to located through the configuration file.
