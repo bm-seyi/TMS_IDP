@@ -89,9 +89,11 @@ namespace TMS_API.Controllers
             (byte[] EncryptedText, byte[] IV) encryptRefreshToken = _securityUtils.EncryptPlaintText(refreshToken, encryptionKey);
 
             byte[] hashedToken = _securityUtils.GenerateHashToken(refreshToken);
+
+            DateTime expiry = DateTime.UtcNow.AddDays(3);
             
             bool storedRefreshToken = await _databaseActions.StoreRefreshTokenAsync(
-                authModel.ClientId, encryptRefreshToken.EncryptedText, DateTime.UtcNow.AddDays(3), 
+                authModel.ClientId, encryptRefreshToken.EncryptedText, expiry, 
                 encryptRefreshToken.IV, hashedToken);
 
             if (!storedRefreshToken)
@@ -99,9 +101,19 @@ namespace TMS_API.Controllers
                 _logger.LogError(ApiMessages.StoreRefreshTokenFailedLog);
                 StatusCode(500, new {Message = ApiMessages.InternalServerErrorMessage});
             }
+
+            CookieOptions cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = expiry
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
            
             string jwtToken = _jwtSecurity.JwtTokenGenerator(authModel.Email);
-            return Ok(new {AccessToken = jwtToken, RefreshToken = refreshToken});
+            return Ok(new {AccessToken = jwtToken});
         }
 
         private async Task<IActionResult> HandleRefreshTokenGrant([FromBody] AuthModel authModel)
