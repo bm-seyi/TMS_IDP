@@ -163,7 +163,7 @@ namespace TMS_API.Utilities
                         {
                             if (!await reader.ReadAsync())
                             {
-                                _logger.LogWarning("No data can be found with the specified clientId {1}", clientID);
+                                _logger.LogWarning("No data can be found with the specified clientId {1}", clientID.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                                 return null;
                             }
 
@@ -181,7 +181,7 @@ namespace TMS_API.Utilities
 
                 if (ex.InnerException != null)
                 {
-                    _logger.LogError("Inner Exception:{1}", ex.InnerException.Message);
+                    _logger.LogError("Inner Exception:{1}", ex.InnerException.Message.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                 }
 
                 return null;
@@ -226,7 +226,7 @@ namespace TMS_API.Utilities
 
                 if (ex.InnerException != null)
                 {
-                    _logger.LogError("Inner Exception:{1}", ex.InnerException.Message);
+                    _logger.LogError("Inner Exception:{1}", ex.InnerException.Message.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                 }
 
                 return null;

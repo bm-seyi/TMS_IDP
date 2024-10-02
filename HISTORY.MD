@@ -21,3 +21,6 @@ API key header has been updated.
 
 ## 0.1.0
 Various additional methods, classes and scripts have been created to support JWT Tokens for the API. Also multiple methods have been redone to improve efficiency. Authentication endpoint has changed due to the JWT changes. Additional validations have been added to models. Environments variables are able to located through the configuration file.
+
+## 0.1.1
+Removed the .http file due to avoid a potential leak if sensitive information is not removed before pushing to repo. Correct changes suggested by CodeQL on Github such as preventing logging injection. As well providing safeguards to user controlled methods. Added a Misc.cs script to store various utility methods.

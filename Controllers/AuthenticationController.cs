@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.RateLimiting;
 using TMS_API.Utilities;
 using TMS_API.Models;
 
-
 namespace TMS_API.Controllers
 {
     [ApiController]
@@ -58,7 +57,7 @@ namespace TMS_API.Controllers
 
         private async Task<IActionResult> HandlePasswordGrant(AuthModel authModel)
         {
-            if (authModel.Email == null || authModel.Password == null)
+            if (string.IsNullOrWhiteSpace(authModel.Email) || string.IsNullOrWhiteSpace(authModel.Password) || !Misc.IsValidEmail(authModel.Email))
             {
                 _logger.LogWarning(ApiMessages.EmailOrPasswordNotProvidedMessage);
                 return BadRequest(new {Message = ApiMessages.EmailOrPasswordNotProvidedMessage});
@@ -81,7 +80,7 @@ namespace TMS_API.Controllers
 
             if (!await VerifyClientCredentials(authModel))
             {
-                _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, authModel.ClientId);
+                _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, authModel.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                 return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage });
             }
 
@@ -109,7 +108,7 @@ namespace TMS_API.Controllers
         {
             if (!await VerifyClientCredentials(authModel))
             {
-                _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, authModel.ClientId);
+                _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, authModel.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                 return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage});
             }
             

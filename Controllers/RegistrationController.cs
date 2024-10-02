@@ -35,14 +35,14 @@ namespace TMS_API.Controllers
                 var authCredentials = await _databaseActions.CredentialsAuthenticationAsync(data.ClientId);
                 if (!authCredentials.HasValue)
                 {
-                    _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId);
+                    _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                     return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage });
                 }
 
                 string decrypted = _securityUtils.DecryptPlainText(authCredentials.Value.secret, encryptionKey, authCredentials.Value.iv);
                 if (decrypted.Trim() != data.ClientSecret)
                 {
-                    _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId);
+                    _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
                     return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage });
                 }
 
