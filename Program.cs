@@ -9,7 +9,10 @@ using TMS_API.Utilities;
 using TMS_API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
+if (Environment.GetEnvironmentVariable("API__Key") is null)
+{
+    DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
+}
 var myOptions = new ApiRateLimitSettings();
 builder.Configuration.GetSection("ApiRateLimitSettings").Bind(myOptions);
 

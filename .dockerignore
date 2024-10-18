@@ -1,0 +1,32 @@
+# Ignore the .NET build files
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.vs/
+.vscode/
+
+# Ignore temporary files
+*.tmp
+*.log
+
+# Ignore backup files
+*.bak
+*.swp
+
+# Ignore environment-specific files
+.env
+
+# Ignore IDE files
+.idea/
+*.sln.ide
+
+# Ignore published output if publishing from a CI/CD pipeline
+publish/
+
+# Optional: Ignore any additional temp files or folders specific to your workflow
+# e.g., .DS_Store or Thumbs.db
+.DS_Store
+Thumbs.db
