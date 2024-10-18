@@ -41,3 +41,18 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Installing the New Relic agent allows for better monitoring and performance tracking of the application.
 - This update enables application performance monitoring.
 - The DockerFile won't be used in a production environment due to secrets being passed in ARG.
+
+## 0.1.4
+### Added
+- A .dockerignore file was created to specify which file types and directories should be excluded during the Docker build process. This helps to streamline the build by preventing unnecessary files from being included, ultimately reducing the image size and improving build times.
+
+###  Fixed
+- Resolved SQL Server connectivity issues by establishing a network bridge, ensuring that the necessary communication channels are available between the API and SQL Server. Additionally, the .env file was excluded from the build process to maintain security and avoid exposing sensitive configurations.
+-  Updated the URL from "http://localhost:5188" to "http://*:5188" to facilitate port binding for the Docker container, allowing it to accept requests from external sources rather than just localhost.
+- Modified the loading mechanism for the .env file, ensuring it is only loaded when the API__KEY environment variable is not found. This change aims to streamline configuration management, with plans for a more dynamic and flexible solution in a future update.
+
+### Removed
+The New Relic agent was removed from the Dockerfile.
+
+### Notes
+The new relic agent was removed to facilitate easier debugging and manual performance improvements, rather than depending on third-party software.
