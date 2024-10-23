@@ -86,15 +86,15 @@ namespace TMS_API.Controllers
 
             string refreshToken = _securityUtils.GenerateRefreshToken();
 
-            (byte[] EncryptedText, byte[] IV) encryptRefreshToken = _securityUtils.EncryptPlaintText(refreshToken, encryptionKey);
+            (byte[] EncryptedText, byte[] IV) encryptRefreshToken = await _securityUtils.EncryptPlaintTextAsync(refreshToken, encryptionKey);
 
-            byte[] hashedToken = _securityUtils.GenerateHashToken(refreshToken);
+            ValueTask<byte[]> hashedToken = _securityUtils.GenerateHashToken(refreshToken);
 
             DateTime expiry = DateTime.UtcNow.AddDays(3);
             
             bool storedRefreshToken = await _databaseActions.StoreRefreshTokenAsync(
                 authModel.ClientId, encryptRefreshToken.EncryptedText, expiry, 
-                encryptRefreshToken.IV, hashedToken);
+                encryptRefreshToken.IV, hashedToken.Result);
 
             if (!storedRefreshToken)
             {
@@ -130,8 +130,8 @@ namespace TMS_API.Controllers
                 return BadRequest(new { Message = ApiMessages.RefreshTokenNotProvidedMessage});
             } 
             
-            byte[] hashedRefreshToken = _securityUtils.GenerateHashToken(authModel.RefreshToken);
-            (DateTime expiry, byte[] Key, byte[] IV, byte[] refreshToken)? tokenData = await _databaseActions.RefreshTokenAuthenticationAsync(hashedRefreshToken);
+            ValueTask<byte[]> hashedRefreshToken = _securityUtils.GenerateHashToken(authModel.RefreshToken);
+            (DateTime expiry, byte[] Key, byte[] IV, byte[] refreshToken)? tokenData = await _databaseActions.RefreshTokenAuthenticationAsync(hashedRefreshToken.Result);
 
             if (tokenData == null)
             {
@@ -145,7 +145,7 @@ namespace TMS_API.Controllers
                 return Unauthorized(new {Message = ApiMessages.RefreshTokenExpiredMessage});
             }
 
-            string decryptKey = _securityUtils.DecryptPlainText(tokenData.Value.refreshToken, tokenData.Value.Key, tokenData.Value.IV);
+            string decryptKey = await _securityUtils.DecryptPlainTextAsync(tokenData.Value.refreshToken, tokenData.Value.Key, tokenData.Value.IV);
 
             if (!decryptKey.Equals(authModel.RefreshToken))
             {
@@ -163,7 +163,7 @@ namespace TMS_API.Controllers
             var authCredentials = await _databaseActions.CredentialsAuthenticationAsync(authModel.ClientId);
             if (!authCredentials.HasValue) return false;
 
-            string decrypted = _securityUtils.DecryptPlainText(authCredentials.Value.secret, encryptionKey, authCredentials.Value.iv);
+            string decrypted = await _securityUtils.DecryptPlainTextAsync(authCredentials.Value.secret, encryptionKey, authCredentials.Value.iv);
 
             if (decrypted.Trim() != authModel.ClientSecret)
             {

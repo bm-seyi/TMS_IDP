@@ -14,11 +14,13 @@ The Tram Management System (TMS) API is designed to handle requests and provide 
 
 | Endpoint      | Response Time (ms) |
 |---------------|--------------------|
-| `auth/token`  | 11,066             |
-| `registration`| 7,620              |
+| `auth/token`  | 10,250             |
+| `registration`| 10,797             |
 
 
 ## Roadmap
+
+- **Response Time** Implement performance enhancements to reduce latency and improve the overall responsiveness of the application. This may include optimizing database queries, refining server-side logic, caching strategies, and minimizing client-server communication overhead.
 
 - **OAuth Implementation:** Secure authentication and authorization for users.
 - **Session Management:** Efficient management of user sessions and state.

@@ -63,3 +63,20 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Notes
 - Endpoint Performance Metric was added to track and monitor performance for each endpoints. Additional changes are expected to added in the future. 
+
+## 0.1.6
+### Added
+- Updated the README.MD with a new section in the roadmap addressing improvements to the API's response time.
+
+### Fixed
+- Implemented ArrayPool to reduce repeated array creation and enhance memory efficiency.
+- Optimized performance by converting multiple method-level instances to private static readonly properties.
+
+### Notes
+- Adjustments in [AuthenticationController.cs](./Controllers/AuthenticationController.cs) and [RegistrationController.cs](./Controllers/RegistrationController.cs) were made to accommodate the changes within [Authentication.cs](./Utilities/Authentication.cs).
+- The project now uses connection pooling for better resource management.
+
+
+
+
+

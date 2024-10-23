@@ -39,7 +39,7 @@ namespace TMS_API.Controllers
                     return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage });
                 }
 
-                string decrypted = _securityUtils.DecryptPlainText(authCredentials.Value.secret, encryptionKey, authCredentials.Value.iv);
+                string decrypted = await _securityUtils.DecryptPlainTextAsync(authCredentials.Value.secret, encryptionKey, authCredentials.Value.iv);
                 if (decrypted.Trim() != data.ClientSecret)
                 {
                     _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
