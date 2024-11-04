@@ -12,10 +12,10 @@ The Tram Management System (TMS) API is designed to handle requests and provide 
 
 ## Endpoint Performance Metrics
 
-| Endpoint      | Response Time (ms) |
-|---------------|--------------------|
-| `auth/token`  | 10,250             |
-| `registration`| 10,797             |
+| Endpoint          | Response Time (ms) |
+|---------------    |--------------------|
+| `auth/password`   | 3,710              |
+| `registration`    | 465                |
 
 
 ## Roadmap

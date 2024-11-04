@@ -1,16 +1,15 @@
-using System.Text;
 using Microsoft.Data.SqlClient;
 
-
-namespace TMS_API.Utilities
+namespace TMS_API.Utilities 
 {
     public interface IDatabaseActions
     {   
         Task<bool> UserRegistrationAsync(string email, byte[] pwdhash, byte[] salt);
-        Task<(byte[]?, byte[]?)> UserAuthenticationAsync(string email);
-        Task<bool> StoreRefreshTokenAsync(string clientID, byte[] RefreshToken, DateTime expiry, byte[] iv, byte[] hashed);
+        Task<bool> StoreRefreshTokenAsync(string clientID, byte[] RefreshToken, DateTime expiry, byte[] hashed);
         Task<(byte[] secret, byte[] iv)?> CredentialsAuthenticationAsync(string clientID);
         Task<(DateTime, byte[], byte[], byte[])?> RefreshTokenAuthenticationAsync(byte[] token);
+        Task<(byte[] hashedpwd, byte[] salt, byte[] secret, byte[] IV)?> AuthenticationUserAndCredentialAsync(string email, string clientID);
+        Task<(byte[] encryptedToken, byte[] IV)?> AuthenticateRefreshTokenandCredentials(string clientID, byte[] hashedToken);
        
     }
 
@@ -59,70 +58,23 @@ namespace TMS_API.Utilities
             }
         }
 
-        public async Task<(byte[]?, byte[]?)> UserAuthenticationAsync(string email)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    throw new ArgumentException("Email must not be null or empty", nameof(email));
-                }
-
-                const string sql_query = "SELECT [pwdhash], [salt] FROM [dbo].[hashed] WHERE [email] = @Value1";
-
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    await connection.OpenAsync();
-
-                    using (SqlCommand command = new SqlCommand(sql_query, connection))
-                    {
-                        command.Parameters.Add("@Value1", System.Data.SqlDbType.NVarChar).Value = email;
-                        await using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                        {
-                            if (await reader.ReadAsync())
-                            {
-                                    byte[] hashedpwd = (byte[])reader["pwdhash"];
-                                    byte[] salt = (byte[])reader["salt"];
-                                    _logger.LogInformation("User has been found");
-                                    return (hashedpwd, salt);
-                            } else
-                            {
-                                _logger.LogWarning("No user found with the provided email.");
-                                return (null, null);
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex)
-            {
-                _logger.LogError("An error occurred when trying to authenticating the user: {Message}", ex.Message);
-                
-                if (ex.InnerException != null)
-                {
-                    _logger.LogError("Inner Exception: {Message}", ex.InnerException.Message);
-                }
-                return (null, null);
-            }
-        }
-
-        public async Task<bool> StoreRefreshTokenAsync(string clientID, byte[] RefreshToken, DateTime expiry, byte[] iv, byte[] hashed)
+        public async Task<bool> StoreRefreshTokenAsync(string clientID, byte[] RefreshToken, DateTime expiry, byte[] hashed)
         {
             if (string.IsNullOrWhiteSpace(clientID)) return false;
 
             try
             {
-                const string query = "INSERT INTO [dbo].[Tokens] ([client_id], [encryptedToken], [expiry], [iv], [hashedToken]) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5)";
+                const string query = "INSERT INTO [dbo].[Tokens] ([client_id], [encryptedToken], [expiry], [hashedToken]) VALUES (@Value1, @Value2, @Value3, @Value4)";
 
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     await connection.OpenAsync();
                     using (SqlCommand command =  new SqlCommand(query, connection))
                     {
-                        command.Parameters.Add("@Value1", System.Data.SqlDbType.UniqueIdentifier).Value = Guid.Parse(clientID);
+                        command.Parameters.Add("@Value1", System.Data.SqlDbType.NVarChar).Value = clientID;
                         command.Parameters.Add("@Value2", System.Data.SqlDbType.VarBinary).Value = RefreshToken;
                         command.Parameters.Add("@Value3", System.Data.SqlDbType.DateTime2).Value = expiry;
-                        command.Parameters.Add("@Value4", System.Data.SqlDbType.VarBinary).Value = iv;
-                        command.Parameters.Add("@Value5", System.Data.SqlDbType.VarBinary).Value = hashed;
+                        command.Parameters.Add("@Value4", System.Data.SqlDbType.VarBinary).Value = hashed;
 
                         _ = await command.ExecuteNonQueryAsync();
                         _logger.LogInformation("Query has been executed. New Token has been registered");
@@ -223,6 +175,89 @@ namespace TMS_API.Utilities
             catch (Exception ex)
             {
                 _logger.LogError("An error occurred when authenticating the refresh token. Error Message: {Message}", ex.Message);
+
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError("Inner Exception:{1}", ex.InnerException.Message.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
+                }
+
+                return null;
+            }
+        }
+
+        public async Task<(byte[] hashedpwd, byte[] salt, byte[] secret, byte[] IV)?> AuthenticationUserAndCredentialAsync(string email, string clientID)
+        {
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    using (SqlCommand command = new SqlCommand("sp_AuthenticateUserAndClient", sqlConnection))
+                    {
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@Email", email);
+                        command.Parameters.AddWithValue("@ClientId", Guid.Parse(clientID));
+
+                        await using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                byte[] hashedpwd = (byte[])reader["pwdhash"];
+                                byte[] salt = (byte[])reader["salt"];
+                                byte[] secret = (byte[])reader["secret"];
+                                byte[] IV = (byte[])reader["iv"];
+
+                                return (hashedpwd, salt, secret, IV);
+                            }
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when authenticating the User and Credentials. Error Message: {Message}", ex.Message);
+
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError("Inner Exception:{1}", ex.InnerException.Message.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
+                }
+
+                return null;
+            }
+        }
+
+        public async Task<(byte[] encryptedToken, byte[] IV)?> AuthenticateRefreshTokenandCredentials(string clientID, byte[] hashedToken)
+        {
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    using (SqlCommand command = new SqlCommand("sp_AuthenticateRefreshTokenandCredentials", sqlConnection))
+                    {
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@ClientId", clientID);
+                        command.Parameters.AddWithValue("@hashedToken", hashedToken);
+                        
+                        await using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                byte[] encryptedToken = (byte[])reader["encryptedToken"];
+                                byte[] IV = (byte[])reader["IV"];
+
+                                return (encryptedToken, IV);
+                            }
+                        }
+
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when authenticating the Refresh Token and Credentials. Error Message: {Message}", ex.Message);
 
                 if (ex.InnerException != null)
                 {
