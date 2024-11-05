@@ -1,15 +1,12 @@
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
 using System.Buffers;
-using TMS_API.Configuration;
 
 namespace TMS_API.Utilities
 {
     public interface ISecurityUtils
     {
-        byte[] GenerateSalt();
         string GenerateAPIKey();
         string GenerateRefreshToken(int length = 64);
         Task<byte[]> EncryptPlaintTextAsync(string plaintext, byte[] Key, byte[]? IV = null);
@@ -20,28 +17,9 @@ namespace TMS_API.Utilities
 
     public class SecurityUtils : ISecurityUtils
     {
-        private readonly Argon2Settings _options;
         private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
         private static readonly ArrayPool<byte> _bytesPool = ArrayPool<byte>.Shared;
         private static readonly SHA256 _sha256Hash = SHA256.Create();
-        public SecurityUtils(IOptions<Argon2Settings> options)
-        {
-            _options = options.Value ?? throw new ArgumentNullException(nameof(options));
-        }
-
-        public byte[] GenerateSalt()
-        {   
-            byte[] buffer = _bytesPool.Rent(_options.Storage);
-            try
-            {
-                _rng.GetBytes(buffer, 0, _options.Storage);
-                return buffer;
-            }
-            finally
-            {
-                _bytesPool.Return(buffer, clearArray: true);
-            }
-        }
 
         public string GenerateAPIKey()
         {
