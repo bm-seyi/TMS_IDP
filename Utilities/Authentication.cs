@@ -3,7 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
 using System.Buffers;
-using Konscious.Security.Cryptography;
 using TMS_API.Configuration;
 
 namespace TMS_API.Utilities
@@ -11,11 +10,10 @@ namespace TMS_API.Utilities
     public interface ISecurityUtils
     {
         byte[] GenerateSalt();
-        byte[] GenerateHash(string password, byte[] salt);
         string GenerateAPIKey();
         string GenerateRefreshToken(int length = 64);
-        Task<(byte[] encryptedText, byte[] iv)> EncryptPlaintTextAsync(string plaintext, byte[] Key, byte[]? IV = null);
-        Task<string> DecryptPlainTextAsync(byte[] cipherBytes, byte[] key, byte[] IV);
+        Task<byte[]> EncryptPlaintTextAsync(string plaintext, byte[] Key, byte[]? IV = null);
+        Task<string> DecryptPlainTextAsync(byte[] cipherBytes, byte[] key);
         ValueTask<byte[]> GenerateHashToken(string token);
 
     }
@@ -43,19 +41,6 @@ namespace TMS_API.Utilities
             {
                 _bytesPool.Return(buffer, clearArray: true);
             }
-        }
-
-        public byte[] GenerateHash(string plaintext, byte[] salt)
-        {
-            using (var argon2 = new Argon2id(Encoding.UTF8.GetBytes(plaintext)))
-            {
-                argon2.Salt = salt;
-                argon2.DegreeOfParallelism = _options.Parallelism;
-                argon2.MemorySize = _options.Memory;
-                argon2.Iterations = _options.Iterations;
-                return argon2.GetBytes(_options.Storage);
-            }
-            
         }
 
         public string GenerateAPIKey()
@@ -87,7 +72,7 @@ namespace TMS_API.Utilities
             }
         }
 
-        public async Task<(byte[] encryptedText, byte[] iv)> EncryptPlaintTextAsync(string plaintext, byte[] Key, byte[]? IV = null)
+        public async Task<byte[]> EncryptPlaintTextAsync(string plaintext, byte[] Key, byte[]? IV = null)
         {
             using (Aes aes = Aes.Create())
             {
@@ -103,30 +88,38 @@ namespace TMS_API.Utilities
 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
+                    memoryStream.Write(aes.IV, 0, aes.IV.Length);
                     using (CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write))
                     using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
                     {
                         await streamWriter.WriteAsync(plaintext);
                     }
-                    return (memoryStream.ToArray(), aes.IV);
+                    return memoryStream.ToArray();
                 }
             }
             
         }
 
-        public async Task<string> DecryptPlainTextAsync(byte[] cipherBytes, byte[] key, byte[] IV)
+        public async Task<string> DecryptPlainTextAsync(byte[] cipherBytes, byte[] key)
         {
+            byte[] iv = new byte[16]; // AES block size (IV size)
+            byte[] actualCipherText = new byte[cipherBytes.Length - iv.Length];
+
+            // Extract IV from the beginning of the ciphertext
+            Array.Copy(cipherBytes, 0, iv, 0, iv.Length);
+            Array.Copy(cipherBytes, iv.Length, actualCipherText, 0, actualCipherText.Length);
+
             using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
-                aes.IV = IV;
+                aes.IV = iv;
 
-                using (ICryptoTransform cryptoTransform = aes.CreateDecryptor(aes.Key, aes.IV))
-                using (MemoryStream memoryStream = new MemoryStream(cipherBytes))
-                using (CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Read))
-                using (StreamReader streamReader = new StreamReader(cryptoStream, Encoding.UTF8))
+                using (ICryptoTransform decryptor = aes.CreateDecryptor())
+                using (MemoryStream ms = new MemoryStream(actualCipherText))
+                using (CryptoStream cryptoStream = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                using (StreamReader reader = new StreamReader(cryptoStream, Encoding.UTF8))
                 {
-                    return await streamReader.ReadToEndAsync();
+                    return await reader.ReadToEndAsync();
                 }
             }
         }

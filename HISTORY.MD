@@ -76,7 +76,30 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Adjustments in [AuthenticationController.cs](./Controllers/AuthenticationController.cs) and [RegistrationController.cs](./Controllers/RegistrationController.cs) were made to accommodate the changes within [Authentication.cs](./Utilities/Authentication.cs).
 - The project now uses connection pooling for better resource management.
 
+## 0.2.0
+### Added
+- Included `tempkey.jwk` in `.gitignore` to prevent exposure of sensitive cryptographic keys.
+- Created an [Attributes](./Attributes/) directory for custom attribute storage.
+- Added [NoWhiteSpace.cs](./Attributes/NoWhiteSpace.cs) to validate that received values are not null, empty, or composed solely of white-space characters. This attribute was applied to properties in [AuthenticationModel.cs](./Models/AuthenticationModel.cs).
+- Integrated ASP.NET Core Identity for user management and authentication in [AuthenticationController.cs](./Controllers/AuthenticationController.cs) and [RegistrationController.cs](./Controllers/RegistrationController.cs).
+- Added configuration files for Duende Identity Server to the [configuration](./Configurations/) folder.
+- Implemented two methods in [databaseHelper.cs](./Utilities/DatabaseHelper.cs) for user authentication using credentials and refresh token verification.
+- Added [token.cs](./Utilities/token.cs) to facilitate communication with the Identity Server.
+- Updated [program.cs](./Program.cs) to support ASP.NET Core Identity and Duende Identity Server.
+- Created [entity.cs](./Models/entity.cs) to allow for custom properties within the user manager.
 
+### Removed
+- Removed `GrantType` and refresh token as they are currently not needed for this endpoint.
+- Deleted unnecessary log messages and HTTP response messages from [Messages.cs](./Utilities/Messages.cs).
+- Removed Argon2 settings from [appsettings.json](./appsettings.json) as they are no longer required.
+
+### Fixed
+- Enhanced encryption and decryption processes by embedding the IV within the ciphered text in [authentication.cs](./Utilities/Authentication.cs).
+- Modified the refresh token storage approach in [databaseHelper.cs](./Utilities/DatabaseHelper.cs) to align with database schema updates.
+
+### Notes
+- The next commit will focus on removing redundant files and improving project structure.
+- The [migrations](./Migrations/) folder was auto-generated due to the integration of Entity Framework into the project.
 
 
 

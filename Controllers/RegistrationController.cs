@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using TMS_API.Utilities;
 using TMS_API.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace TMS_API.Controllers
 {
@@ -10,15 +11,11 @@ namespace TMS_API.Controllers
     public class RegistrationController : ControllerBase
     {
         private readonly ILogger<RegistrationController> _logger;
-        private readonly IDatabaseActions _databaseActions;
-        private readonly ISecurityUtils _securityUtils;
-        private readonly byte[] encryptionKey;
-        public RegistrationController(ILogger<RegistrationController> logger, IDatabaseActions databaseActions, ISecurityUtils securityUtils, IConfiguration configuration)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public RegistrationController(ILogger<RegistrationController> logger, UserManager<ApplicationUser> userManager)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _databaseActions = databaseActions ?? throw new ArgumentNullException(nameof(databaseActions));
-            _securityUtils = securityUtils ?? throw new ArgumentNullException(nameof(securityUtils));
-            encryptionKey = Convert.FromHexString(configuration["Encryption:Key"] ?? throw new ArgumentNullException(nameof(configuration)));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
         [EnableRateLimiting("TokenPolicy")]
@@ -32,27 +29,16 @@ namespace TMS_API.Controllers
             }
             try
             {
-                var authCredentials = await _databaseActions.CredentialsAuthenticationAsync(data.ClientId);
-                if (!authCredentials.HasValue)
+                ApplicationUser user = new ApplicationUser
                 {
-                    _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
-                    return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage });
-                }
+                    Email = data.Email,
+                    UserName = data.Email,
+                };
 
-                string decrypted = await _securityUtils.DecryptPlainTextAsync(authCredentials.Value.secret, encryptionKey, authCredentials.Value.iv);
-                if (decrypted.Trim() != data.ClientSecret)
+                var result = await _userManager.CreateAsync(user, data.Password);
+                if (!result.Succeeded)
                 {
-                    _logger.LogWarning(ApiMessages.CredentialsAuthenticationFailedLog, data.ClientId.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", ""));
-                    return Unauthorized(new { Message = ApiMessages.ClientCredentialsAuthenticationFailedMessage });
-                }
-
-                byte[] salt = _securityUtils.GenerateSalt();
-                byte[] hashedpwd = _securityUtils.GenerateHash(data.Password, salt);
-
-                if (!await _databaseActions.UserRegistrationAsync(data.Email, hashedpwd, salt))
-                {
-                   _logger.LogError("User Registration Failed");
-                    return StatusCode(500, new {Message = ApiMessages.InternalServerErrorMessage}); 
+                    throw new Exception(result.Errors.Any() ? string.Join(" ",result.Errors.Select(e => e.Description)) : "User Creation Failed");
                 }
 
                 _logger.LogInformation("User Registered Successfully");
