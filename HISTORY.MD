@@ -102,4 +102,12 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - The [migrations](./Migrations/) folder was auto-generated due to the integration of Entity Framework into the project.
 
 
+## 0.2.1
+### Removed
+- Deleted `Argon.cs` from the [Configuration](./Configurations/) folder, as it is no longer necessary.
+- Removed `Misc.cs` from the [Utilities](./Utilities/) folder for the same reason.
+- Eliminated Argon2-related methods from [Authentication.cs](./Utilities/Authentication.cs).
+- Removed unused methods from [DatabaseHelper.cs](./Utilities/DatabaseHelper.cs), which are now redundant since their functions were replaced by ASP.NET Core Identity.
 
+### Notes
+- The next commit will aim to incorporate storage for client IDs and client secrets.
