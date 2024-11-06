@@ -111,3 +111,22 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Notes
 - The next commit will aim to incorporate storage for client IDs and client secrets.
+
+## 0.2.2
+### Added
+- Created a [folder](./DbContext/) to store the database context.
+- Introduced a connection string variable in [Program.cs](./Program.cs) to avoid repetitive calls from configuration.
+- Registered `Duende.IdentityServer.EntityFramework` database contexts for dependency injection in [Program.cs](./Program.cs).
+
+### Fixed
+- Adjusted the order in [Program.cs](./Program.cs) to ensure [appsettings.json](./appsettings.json) is added to the configuration before loading services.
+- Updated the Duende Identity Server configuration to use the entity framework instead of in-memory storage.
+
+### Removed
+- Deleted JWT configuration from [Program.cs](./Program.cs) as it's now managed by Duende for token handling.
+- Removed Duende configuration files from in-memory storage as they are now managed through `Duende.IdentityServer.EntityFramework`.
+- Removed `Jwt.cs` as it is no longer necessary.
+
+### Notes
+- The upcoming release will include bootstrap seeding.
+- Additional folders have been created to support the integration of `Duende.IdentityServer.EntityFramework`.

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj": {}
+    "C:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj": {}
   },
   "projects": {
-    "c:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj": {
+    "C:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj",
+        "projectUniqueName": "C:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj",
         "projectName": "TMS_API",
-        "projectPath": "c:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj",
+        "projectPath": "C:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\TMS_API.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\obj\\",
+        "outputPath": "C:\\Users\\User\\OneDrive\\Code\\Tram Management System\\TMS_API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -20,6 +20,7 @@
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -47,11 +48,15 @@
               "target": "Package",
               "version": "[3.0.0, )"
             },
-            "Duende.IdentityServer": {
+            "Duende.AccessTokenManagement": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Duende.IdentityServer.AspNetIdentity": {
               "target": "Package",
               "version": "[7.0.8, )"
             },
-            "Duende.IdentityServer.AspNetIdentity": {
+            "Duende.IdentityServer.EntityFramework": {
               "target": "Package",
               "version": "[7.0.8, )"
             },

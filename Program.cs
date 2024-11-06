@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.RateLimiting;
-using System.Text;
 using TMS_API.Configuration;
 using TMS_API.Utilities;
 using TMS_API.Middleware;
-using TMS_API.Models;
+using TMS_API.DbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +14,11 @@ if (Environment.GetEnvironmentVariable("API__Key") is null)
 {
     DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
 }
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
+// Add services to the container.
+
+string connectionString = builder.Configuration["ConnectionStrings:Development"] ?? throw new ArgumentNullException(nameof(connectionString));
 
 // Rate Limit Configuration
 var myOptions = new ApiRateLimitSettings();
@@ -37,47 +39,43 @@ builder.Services.AddRateLimiter(options =>
 });
 
 
-// AspNetCore Identity Configuration
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:Development"]));
+// AspNetCore Identity DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
+// Duende Configuration DbContext
+builder.Services.AddDbContext<ConfigurationDbContext>(options => options.UseSqlServer(connectionString));
+
+// Duende Persisted DbContext
+builder.Services.AddDbContext<PersistedGrantDbContext>(options => options.UseSqlServer(connectionString));
+
+// AspNetCore Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
 // Duende Identity Server Configuration
+var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddIdentityServer()
-    .AddInMemoryClients(Clients.Get())
-    .AddInMemoryApiScopes(ApiScopes.Get())
-    .AddInMemoryApiResources(ApiResources.Get())
-    .AddInMemoryIdentityResources(IdentityResources.Get())
-    .AddAspNetIdentity<ApplicationUser>()
-    .AddDeveloperSigningCredential();
-
-// JWT Configuration
-builder.Services.AddAuthentication(options => 
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+    .AddConfigurationStore(options =>
     {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new ArgumentNullException())),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
-    };
-});
+        options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+        sql => sql.MigrationsAssembly(migrationsAssembly));
+    })
+    .AddOperationalStore(options =>
+    {
+        options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+        sql => sql.MigrationsAssembly(migrationsAssembly));
+    });
 
+
+builder.Services.AddAuthentication()
+    .AddJwtBearer(options => 
+    {
+        options.Authority = "http://localhost:5188";
+        options.TokenValidationParameters.ValidateAudience = false;
+    });
 
 builder.Services.AddAuthorization();
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -86,7 +84,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
-builder.Services.AddScoped<IJwtSecurity, JwtSecurity>();
 builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
 
 // Ensure logging services are added
@@ -99,7 +96,6 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ApiMiddleware>();
 app.UseRateLimiter();
 app.UseIdentityServer();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
