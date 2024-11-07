@@ -130,3 +130,10 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Notes
 - The upcoming release will include bootstrap seeding.
 - Additional folders have been created to support the integration of `Duende.IdentityServer.EntityFramework`.
+
+## 0.2.3
+### Added
+- Added a [GitHub Action](./.github/workflows/dependency-review.yml) to monitor dependencies for vulnerabilities and invalid licenses.
+
+### Notes
+- Future commits will focus on adding GitHub Actions for code quality, security, and unit testing.
