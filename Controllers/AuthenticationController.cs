@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using TMS_API.Utilities;
 using TMS_API.Models;
 using Microsoft.AspNetCore.Identity;
+using TMS_API.DbContext;
 
 namespace TMS_API.Controllers
 {
@@ -81,7 +82,7 @@ namespace TMS_API.Controllers
                 };
 
                 Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-                return Ok(new {tokenResponse});
+                return Ok(new {AccessToken = tokenResponse.AccessToken});
 
             } 
             catch (Exception ex)
