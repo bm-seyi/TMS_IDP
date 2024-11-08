@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMS_API", "TMS_API.csproj", "{21C46C00-50BD-4079-94BE-4610CF2E3E2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMS_API", "API\TMS_API.csproj", "{44F42BEF-637A-4941-918C-DA544BEBF3CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{9B819690-055B-40C0-A0D1-FF7161D836B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{21C46C00-50BD-4079-94BE-4610CF2E3E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21C46C00-50BD-4079-94BE-4610CF2E3E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21C46C00-50BD-4079-94BE-4610CF2E3E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21C46C00-50BD-4079-94BE-4610CF2E3E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44F42BEF-637A-4941-918C-DA544BEBF3CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44F42BEF-637A-4941-918C-DA544BEBF3CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44F42BEF-637A-4941-918C-DA544BEBF3CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44F42BEF-637A-4941-918C-DA544BEBF3CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B819690-055B-40C0-A0D1-FF7161D836B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B819690-055B-40C0-A0D1-FF7161D836B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B819690-055B-40C0-A0D1-FF7161D836B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B819690-055B-40C0-A0D1-FF7161D836B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7214F671-0B7A-4E77-8BD9-156095964F7E}
+		SolutionGuid = {A960E791-25AF-4EED-9952-8854572E2DC0}
 	EndGlobalSection
 EndGlobal

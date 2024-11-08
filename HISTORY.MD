@@ -137,3 +137,15 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Notes
 - Future commits will focus on adding GitHub Actions for code quality, security, and unit testing.
+
+## 0.3.0
+### Added
+- Introduced a [Tests](./Tests/) folder to organize unit tests.
+
+### Fixed
+- Restructured the folder layout to support unit testing.
+- Excluded `bin` and `obj` folders as they are not required for building the project.
+
+### Notes
+- The upcoming commit will address the [Dockerfile](./Dockerfile), as the folder restructure may cause build issues.
+- Secrets and keys in the `.env` file will be rotated.
