@@ -149,3 +149,15 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Notes
 - The upcoming commit will address the [Dockerfile](./Dockerfile), as the folder restructure may cause build issues.
 - Secrets and keys in the `.env` file will be rotated.
+
+## 0.3.1
+### Added
+- Implemented the first unit test for testing the [token.cs](./API/Utilities/token.cs).
+- Included the [TMS_API.csproj](./API/TMS_API.csproj) as a project reference in [Tests](./Tests/Tests.csproj).
+
+### Removed
+- Deleted the bin and obj folders from the [Tests](./Tests/).
+
+### Fixed
+- Corrected the [Dockerfile](./Dockerfile) to use the proper directories for successful builds.
+
