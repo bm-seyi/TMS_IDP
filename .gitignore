@@ -8,6 +8,6 @@ obj/
 *.sln.docstates
 
 # Other Exclustions
-Resources/.env
+.env
 TMS_API.http
 tempkey.jwk

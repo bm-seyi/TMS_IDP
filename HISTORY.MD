@@ -161,3 +161,10 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Fixed
 - Corrected the [Dockerfile](./Dockerfile) to use the proper directories for successful builds.
 
+
+## 0.3.2
+### Fixed
+- Relocated [.gitignore](./.gitignore) and [.dockerignore](./.dockerignore) files to the root directory.
+
+### Removed
+- Deleted remaining `obj` folder in [Tests](./Tests/) that was not completely removed previously.
