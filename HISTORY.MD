@@ -168,3 +168,12 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Removed
 - Deleted remaining `obj` folder in [Tests](./Tests/) that was not completely removed previously.
+
+### 0.3.3
+### Added
+- Introduced unit tests for [Authentication.cs](./Tests/Utilities/Authentication.cs).
+
+### Notes
+- Upcoming commits will focus on adding unit tests for essential scripts.
+- A GitHub action for running unit tests prior to merges will be implemented in the future.
+
