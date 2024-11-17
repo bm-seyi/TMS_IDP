@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace TMS_API.Middleware
@@ -20,20 +21,19 @@ namespace TMS_API.Middleware
         {
             if (!context.Request.Headers.TryGetValue(API_HEADER, out StringValues extractedAPIKey) || string.IsNullOrWhiteSpace(extractedAPIKey))
             {
-                context.Response.StatusCode = 401; //Unauthorized
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized; //Unauthorized
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(apiKey))
             {
-                context.Response.StatusCode = 500; // Internal Server Error
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // Internal Server Error
                 return;
             }
 
             if (!string.Equals(apiKey, extractedAPIKey))
             {
-                Console.WriteLine(apiKey);
-                context.Response.StatusCode = 403; // Forbidden
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized; // Unauthorized
                 return;
             }
             

@@ -4,6 +4,7 @@ using TMS_API.Utilities;
 using TMS_API.Models;
 using Microsoft.AspNetCore.Identity;
 using TMS_API.DbContext;
+using System.Net;
 
 namespace TMS_API.Controllers
 {
@@ -38,7 +39,6 @@ namespace TMS_API.Controllers
                 return BadRequest(new {Message = ApiMessages.InvalidModelStateMessage, Details = ModelState});
             }
 
-
             try
             {
                 ApplicationUser? user = await _userManager.FindByEmailAsync(authModel.Email);
@@ -68,7 +68,7 @@ namespace TMS_API.Controllers
 
                 IdentityModel.Client.TokenResponse tokenResponse = await _tokenService.ROPCAsync(authModel.Password, authModel.Email, authModel.ClientId, authModel.ClientSecret);
 
-                if (tokenResponse.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                if (tokenResponse.HttpStatusCode != HttpStatusCode.OK)
                 {
                     throw new Exception(ApiMessages.InternalServerErrorMessage);
                 } 
@@ -92,7 +92,7 @@ namespace TMS_API.Controllers
                 {
                     _logger.LogError(ApiMessages.InternalErrorMessageLog, ex.InnerException.Message);
                 }
-                return StatusCode(500, new {Message = ApiMessages.InternalServerErrorMessage});
+                return StatusCode((int)HttpStatusCode.InternalServerError, new {Message = ApiMessages.InternalServerErrorMessage});
             }
         }
 

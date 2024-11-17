@@ -6,6 +6,7 @@ using TMS_API.Configuration;
 using TMS_API.Utilities;
 using TMS_API.Middleware;
 using TMS_API.DbContext;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Configuration.GetSection("ApiRateLimitSettings").Bind(myOptions);
 
 builder.Services.AddRateLimiter(options =>
 {
-    options.RejectionStatusCode = 429;
+    options.RejectionStatusCode = (int)HttpStatusCode.TooManyRequests;
     options.AddTokenBucketLimiter(policyName: "TokenPolicy", configureOptions: tokenOptions =>
     {
         tokenOptions.TokenLimit = myOptions.TokenLimit; 
