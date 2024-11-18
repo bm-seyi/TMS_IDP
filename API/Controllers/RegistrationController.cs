@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using TMS_API.Utilities;
 using TMS_API.Models;
 using TMS_API.DbContext;
+using System.Net;
 
 namespace TMS_API.Controllers
 {
@@ -53,7 +54,7 @@ namespace TMS_API.Controllers
                 {
                     _logger.LogError(ApiMessages.InternalErrorMessageLog, ex.InnerException.Message);
                 }
-                return StatusCode(500, new {Message = ApiMessages.InternalServerErrorMessage});
+                return StatusCode((int)HttpStatusCode.InternalServerError, new {Message = ApiMessages.InternalServerErrorMessage});
             }
         }
     }

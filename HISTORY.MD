@@ -169,11 +169,20 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Removed
 - Deleted remaining `obj` folder in [Tests](./Tests/) that was not completely removed previously.
 
-### 0.3.3
+## 0.3.3
 ### Added
 - Introduced unit tests for [Authentication.cs](./Tests/Utilities/Authentication.cs).
 
 ### Notes
 - Upcoming commits will focus on adding unit tests for essential scripts.
 - A GitHub action for running unit tests prior to merges will be implemented in the future.
+
+## 0.3.4
+## Added
+- Unit tests for the [security middleware](./Tests/Middleware/securityMiddleware.cs).
+
+## Fixed
+- Updated the returned error code in [securityMiddleware.cs](./API/Middleware/securityMiddleware.cs) from "forbidden" to "unauthorized."
+- Modified [program.cs](./API/Program.cs), [securityMiddleware.cs](./API/Middleware/securityMiddleware.cs), and [Controllers](./API/Controllers/) to utilize `HttpStatusCode` instead of hardcoded numeric values.
+- Updated the test class in [Authentication.cs](./Tests/Utilities/Authentication.cs) to use `TestInitialize` instead of a constructor.
 

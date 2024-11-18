@@ -8,9 +8,10 @@ namespace TMS_API.Tests
     [TestClass]
     public class SecurityUtilsTests
     {
-        private readonly SecurityUtils _securityUtils;
-
-        public SecurityUtilsTests()
+        private SecurityUtils _securityUtils = null!;
+        
+        [TestInitialize]
+        public void Setup()
         {
             _securityUtils = new SecurityUtils();
         }
