@@ -178,11 +178,18 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - A GitHub action for running unit tests prior to merges will be implemented in the future.
 
 ## 0.3.4
-## Added
+### Added
 - Unit tests for the [security middleware](./Tests/Middleware/securityMiddleware.cs).
 
-## Fixed
+### Fixed
 - Updated the returned error code in [securityMiddleware.cs](./API/Middleware/securityMiddleware.cs) from "forbidden" to "unauthorized."
 - Modified [program.cs](./API/Program.cs), [securityMiddleware.cs](./API/Middleware/securityMiddleware.cs), and [Controllers](./API/Controllers/) to utilize `HttpStatusCode` instead of hardcoded numeric values.
 - Updated the test class in [Authentication.cs](./Tests/Utilities/Authentication.cs) to use `TestInitialize` instead of a constructor.
 
+## 0.3.5
+### Added
+- Included unit tests for the [Authentication Controller](./Tests/Controllers/AuthenticationController.cs).
+
+### Fixed
+- Updated `StatusCode` in [AuthenticationController.cs](./API/Controllers/AuthenticationController.cs) to use `HttpStatusCode` instead of a hardcoded numeric value.
+- Modified the properties in [Tokens.cs](./Tests/Utilities/Tokens.cs) to use null forgivers instead of being nullable.
