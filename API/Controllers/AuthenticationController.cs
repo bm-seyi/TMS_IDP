@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Identity;
+using System.Net;
 using TMS_API.Utilities;
 using TMS_API.Models;
-using Microsoft.AspNetCore.Identity;
 using TMS_API.DbContext;
-using System.Net;
 
 namespace TMS_API.Controllers
 {
@@ -63,7 +63,7 @@ namespace TMS_API.Controllers
                 if (!storedRefreshToken)
                 {
                     _logger.LogError(ApiMessages.StoreRefreshTokenFailedLog);
-                    StatusCode(500, new {Message = ApiMessages.InternalServerErrorMessage});
+                    StatusCode((int)HttpStatusCode.InternalServerError, new {Message = ApiMessages.InternalServerErrorMessage});
                 }
 
                 IdentityModel.Client.TokenResponse tokenResponse = await _tokenService.ROPCAsync(authModel.Password, authModel.Email, authModel.ClientId, authModel.ClientSecret);

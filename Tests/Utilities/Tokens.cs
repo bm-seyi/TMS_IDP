@@ -12,9 +12,9 @@ namespace TMS_API.Tests
     public class TokenServiceTests
     {
 
-        private Mock<IHttpClientFactory>? _httpClientFactoryMock;
-        private Mock<IConfiguration>? _configurationMock;
-        private TokenService? _tokenService;
+        private Mock<IHttpClientFactory> _httpClientFactoryMock = null!;
+        private Mock<IConfiguration> _configurationMock = null!;
+        private TokenService _tokenService  = null!;
 
         [TestInitialize]
         public void Setup()
