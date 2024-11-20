@@ -20,10 +20,9 @@ The Tram Management System (TMS) API is designed to handle requests and provide 
 
 ## Roadmap
 
-- **Response Time** Implement performance enhancements to reduce latency and improve the overall responsiveness of the application. This may include optimizing database queries, refining server-side logic, caching strategies, and minimizing client-server communication overhead.
+- **Code Coverage:** Eliminated redundant files and directories from code coverage.
 
-- **OAuth Implementation:** Secure authentication and authorization for users.
-- **Session Management:** Efficient management of user sessions and state.
+- **SignalR:** Integrated SignalR to enable real-time communication with [TMS_APP](https://github.com/bm-seyi/TMS_APP).
 
 ## Support
 
