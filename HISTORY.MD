@@ -199,3 +199,9 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Implemented unit tests for [RegistrationController.cs](./API/Controllers/RegistrationController.cs).
 - Revised the Roadmap in [README.md](README.MD) to reflect the project's updated goals.
 
+## 0.3.7
+### Added
+- Implemented a [GitHub Action](./.github/workflows/ci.yml) to run unit tests.
+
+### Fixed
+- Removed the unnecessary token supplying the GitHub token, which resolved the error.
