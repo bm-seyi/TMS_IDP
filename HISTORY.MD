@@ -193,3 +193,9 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Fixed
 - Updated `StatusCode` in [AuthenticationController.cs](./API/Controllers/AuthenticationController.cs) to use `HttpStatusCode` instead of a hardcoded numeric value.
 - Modified the properties in [Tokens.cs](./Tests/Utilities/Tokens.cs) to use null forgivers instead of being nullable.
+
+## 0.3.6
+### Added
+- Implemented unit tests for [RegistrationController.cs](./API/Controllers/RegistrationController.cs).
+- Revised the Roadmap in [README.md](README.MD) to reflect the project's updated goals.
+
