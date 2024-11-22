@@ -205,3 +205,10 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Fixed
 - Removed the unnecessary token supplying the GitHub token, which resolved the error.
+
+## 0.3.8
+### Added
+- Introduced [IdentityServer.cs](./API/Configurations/IdentityServer.cs) to handle data seeding for the database.
+
+### Fixed
+- Adjusted the middleware order to ensure data seeding occurs before enabling IdentityServer.
