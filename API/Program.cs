@@ -39,7 +39,6 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-
 // AspNetCore Identity DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
@@ -87,6 +86,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
 builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
 
+
 // Ensure logging services are added
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -96,14 +96,16 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseMiddleware<ApiMiddleware>();
 app.UseRateLimiter();
-app.UseIdentityServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    await IdentityServerSeeder.Seed(app.Services); // Add Identity Server Seeding
 }
+
+app.UseIdentityServer();
 app.UseAuthentication();  
 app.UseAuthorization();
 IConfiguration configuration = app.Configuration;

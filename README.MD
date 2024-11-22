@@ -4,6 +4,10 @@
 
 The Tram Management System (TMS) API is designed to handle requests and provide services for the TMS app. It facilitates communication between the app and backend systems, ensuring smooth operation and data management.
 
+The project currently uses default values to seed the database. For scopes, claims, and identity resources, in a production environment, the [ClientCredGen](https://github.com/bm-seyi/ClientCredGen) tool would be used to remove the default data from the database and replace it with the required data. 
+
+As of 22/11/2024, [ClientCredGen](https://github.com/bm-seyi/ClientCredGen) needs to be unarchived and updated to align with the latest changes in this project.
+
 ## Features
 
 - Request handling for the TMS app
@@ -14,7 +18,7 @@ The Tram Management System (TMS) API is designed to handle requests and provide 
 
 | Endpoint          | Response Time (ms) |
 |---------------    |--------------------|
-| `auth/password`   |1,318              |
+| `auth/password`   |1,318               |
 | `registration`    | 465                |
 
 
