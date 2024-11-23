@@ -212,3 +212,19 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Fixed
 - Adjusted the middleware order to ensure data seeding occurs before enabling IdentityServer.
+
+## 0.4.0
+### Added
+- Introduced TypeScript to the project to improve the login functionality for the Authorization Code Flow with Proof Key for Code Exchange (PKCE).
+- Updated [.gitignore](.gitignore) and [.dockerignore](.dockerignore) to include additional folders necessary for integrating TypeScript into the project.
+- Developed a new [controller](./API/Controllers/AccountController.cs) and [model](./API/Models/AccountModel.cs) to implement the PKCE authorization flow.
+- Added [_Layout.cshtml](./API/Views/Shared/_Layout.cshtml) as a layout template for [login.cshtml](./API/Views/Account/login.cshtml).
+- Created [login.tsc](./API/Scripts/login.ts) for enhanced validation of [login.cshtml](./API/Views/Account/login.cshtml). This TypeScript file was compiled to JavaScript, available [here](./API/wwwroot/js/login.js).
+- Added a new [main.css](./API/wwwroot/css/main.css) stylesheet.
+
+### Removed
+- Deleted redundant Test packages from the [project](./API/TMS_API.csproj).
+
+### Fixed
+- Updated `program.cs` configuration to support the PKCE authorization flow, replacing the legacy ROPC flow.
+- Modified the [IdentityServer](./API/Configurations/IdentityServer.cs) configuration to accommodate the PKCE authorization flow.

@@ -7,6 +7,7 @@ using TMS_API.Utilities;
 using TMS_API.Middleware;
 using TMS_API.DbContext;
 using System.Net;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,6 @@ if (Environment.GetEnvironmentVariable("API__Key") is null)
 }
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
-// Add services to the container.
 
 string connectionString = builder.Configuration["ConnectionStrings:Development"] ?? throw new ArgumentNullException(nameof(connectionString));
 
@@ -55,29 +55,45 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 // Duende Identity Server Configuration
 var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
-builder.Services.AddIdentityServer()
-    .AddConfigurationStore(options =>
-    {
-        options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-        sql => sql.MigrationsAssembly(migrationsAssembly));
-    })
-    .AddOperationalStore(options =>
-    {
-        options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-        sql => sql.MigrationsAssembly(migrationsAssembly));
-    });
+builder.Services.AddIdentityServer(options =>
+{
+    options.UserInteraction.LoginUrl = "/Account/Login";
+    options.UserInteraction.LogoutUrl = "/Account/Logout";
+})
+.AddAspNetIdentity<ApplicationUser>()
+.AddConfigurationStore(options =>
+{
+    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+    sql => sql.MigrationsAssembly(migrationsAssembly));
+})
+.AddOperationalStore(options =>
+{
+    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+    sql => sql.MigrationsAssembly(migrationsAssembly));
+});
 
-
-builder.Services.AddAuthentication()
-    .AddJwtBearer(options => 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer",options => 
     {
         options.Authority = "http://localhost:5188";
-        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidAudience = "api1"
+        };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ApiScope", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("scope", "api1.read");
+    });
+});
 
 builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -93,8 +109,9 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 var app = builder.Build();
+app.UseStaticFiles();
 app.UseHttpsRedirection();
-app.UseMiddleware<ApiMiddleware>();
+//app.UseMiddleware<ApiMiddleware>();
 app.UseRateLimiter();
 
 // Configure the HTTP request pipeline.
@@ -108,6 +125,7 @@ if (app.Environment.IsDevelopment())
 app.UseIdentityServer();
 app.UseAuthentication();  
 app.UseAuthorization();
+
 IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;
 

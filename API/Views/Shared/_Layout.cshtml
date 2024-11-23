@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/main.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <!-- Your header content here -->
+    </header>
+
+    <main role="main" class="container">
+        @RenderBody() <!-- This is where the view content will go -->
+    </main>
+
+    @RenderSection("scripts", required: false) <!-- Optional section for scripts -->
+</body>
+</html>

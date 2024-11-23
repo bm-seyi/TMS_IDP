@@ -11,3 +11,4 @@ obj/
 .env
 TMS_API.http
 tempkey.jwk
+node_modules/
