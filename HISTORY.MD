@@ -228,3 +228,25 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Fixed
 - Updated `program.cs` configuration to support the PKCE authorization flow, replacing the legacy ROPC flow.
 - Modified the [IdentityServer](./API/Configurations/IdentityServer.cs) configuration to accommodate the PKCE authorization flow.
+
+
+### 0.4.1
+### Added
+- Added a method in [Authentication](./API/Utilities/Authentication.cs) for generating code challengers.
+
+### Removed
+- Deleted the authentication controller and model, as they are now unnecessary due to the API's adoption of the PKCE authorization flow.
+- Removed the redundant Microsoft Identity Client package from the project.
+
+### Fixed
+- Updated the project to build using the HTTPS protocol by modifying [launchSettings](./API/Properties/launchSettings.json) and [appsettings](./API/appsettings.json).
+- Updated Authentication to support the PKCE authorization flow, adding required support for state and session management in [Program](./API/Program.cs).
+- Resolved an issue where the seeded client was not loading into the database.
+- Fixed `RedirectUris` to include the callback endpoint.
+- Updated scopes to include `offline_access`, enabling the identity server to generate refresh tokens.
+- Adjusted endpoints in [AccountController](./API/Controllers/AccountController.cs) to align with the PKCE authorization flow.
+- Modified the method in [Token](./API/Utilities/Token.cs) to use the Authorization Code Token Request instead of the Password Token Request.
+
+### Notes
+- Future updates will focus on enhancing the login page's quality.
+- Unit tests will be included in the next commit.

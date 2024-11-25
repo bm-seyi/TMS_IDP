@@ -2,7 +2,7 @@ using IdentityModel.Client;
 
 public interface ITokenService
 {
-    Task<TokenResponse> ROPCAsync(string password, string username, string ClientID, string ClientSecret);
+   Task<TokenResponse> PCKEAsync(string codeVerifier, string ClientID, string code);
 }
 
 public class TokenService : ITokenService
@@ -16,20 +16,19 @@ public class TokenService : ITokenService
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public async Task<TokenResponse> ROPCAsync(string password, string username, string ClientID, string ClientSecret)
+    public async Task<TokenResponse> PCKEAsync(string codeVerifier, string ClientID, string code)
     {
         HttpClient client =  _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Add("x-api-key", _configuration["API:Key"]);
-        var tokenRequest = new PasswordTokenRequest
+        AuthorizationCodeTokenRequest tokenRequest = new AuthorizationCodeTokenRequest
         {
-            Address = "http://localhost:5188/connect/token",
-            Password = password,
-            UserName = username,
+            Address = "https://localhost:5188/connect/token",
             ClientId = ClientID,
-            ClientSecret = ClientSecret,
-            Scope = "tms.read"
+            Code = code,
+            RedirectUri = "https://localhost:5188/account/callback",
+            CodeVerifier = codeVerifier
         };
 
-        return await client.RequestPasswordTokenAsync(tokenRequest);
+        return await client.RequestAuthorizationCodeTokenAsync(tokenRequest);
     }
 }

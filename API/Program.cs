@@ -72,16 +72,26 @@ builder.Services.AddIdentityServer(options =>
     sql => sql.MigrationsAssembly(migrationsAssembly));
 });
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer",options => 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+})
+.AddCookie("Cookies", options =>
+{
+    options.LoginPath = "/account/login";
+})
+.AddOpenIdConnect("oidc", options =>
+{
+    options.Authority = "https://localhost:5188";
+    options.ClientId = "maui_client";
+    options.ResponseType = "code";
+    options.SaveTokens = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Authority = "http://localhost:5188";
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = true,
-            ValidAudience = "api1"
-        };
-    });
+        ValidateIssuer = true
+    };
+});
 
 builder.Services.AddAuthorization(options =>
 {
@@ -90,6 +100,15 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("scope", "api1.read");
     });
+});
+
+// Add Session services to the container
+builder.Services.AddDistributedMemoryCache(); // Required for session state
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddControllers();
@@ -125,6 +144,7 @@ if (app.Environment.IsDevelopment())
 app.UseIdentityServer();
 app.UseAuthentication();  
 app.UseAuthorization();
+app.UseSession();
 
 IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;

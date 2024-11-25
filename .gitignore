@@ -9,6 +9,6 @@ obj/
 
 # Other Exclustions
 .env
-TMS_API.http
+TMS_API.https
 tempkey.jwk
 node_modules/
