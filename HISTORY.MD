@@ -212,3 +212,51 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Fixed
 - Adjusted the middleware order to ensure data seeding occurs before enabling IdentityServer.
+
+## 0.4.0
+### Added
+- Introduced TypeScript to the project to improve the login functionality for the Authorization Code Flow with Proof Key for Code Exchange (PKCE).
+- Updated [.gitignore](.gitignore) and [.dockerignore](.dockerignore) to include additional folders necessary for integrating TypeScript into the project.
+- Developed a new [controller](./API/Controllers/AccountController.cs) and [model](./API/Models/AccountModel.cs) to implement the PKCE authorization flow.
+- Added [_Layout.cshtml](./API/Views/Shared/_Layout.cshtml) as a layout template for [login.cshtml](./API/Views/Account/login.cshtml).
+- Created [login.tsc](./API/Scripts/login.ts) for enhanced validation of [login.cshtml](./API/Views/Account/login.cshtml). This TypeScript file was compiled to JavaScript, available [here](./API/wwwroot/js/login.js).
+- Added a new [main.css](./API/wwwroot/css/main.css) stylesheet.
+
+### Removed
+- Deleted redundant Test packages from the [project](./API/TMS_API.csproj).
+
+### Fixed
+- Updated `program.cs` configuration to support the PKCE authorization flow, replacing the legacy ROPC flow.
+- Modified the [IdentityServer](./API/Configurations/IdentityServer.cs) configuration to accommodate the PKCE authorization flow.
+
+
+### 0.4.1
+### Added
+- Added a method in [Authentication](./API/Utilities/Authentication.cs) for generating code challengers.
+
+### Removed
+- Deleted the authentication controller and model, as they are now unnecessary due to the API's adoption of the PKCE authorization flow.
+- Removed the redundant Microsoft Identity Client package from the project.
+
+### Fixed
+- Updated the project to build using the HTTPS protocol by modifying [launchSettings](./API/Properties/launchSettings.json) and [appsettings](./API/appsettings.json).
+- Updated Authentication to support the PKCE authorization flow, adding required support for state and session management in [Program](./API/Program.cs).
+- Resolved an issue where the seeded client was not loading into the database.
+- Fixed `RedirectUris` to include the callback endpoint.
+- Updated scopes to include `offline_access`, enabling the identity server to generate refresh tokens.
+- Adjusted endpoints in [AccountController](./API/Controllers/AccountController.cs) to align with the PKCE authorization flow.
+- Modified the method in [Token](./API/Utilities/Token.cs) to use the Authorization Code Token Request instead of the Password Token Request.
+
+### Notes
+- Future updates will focus on enhancing the login page's quality.
+- Unit tests will be included in the next commit.
+
+## 0.4.2
+### Added
+- Wrote [unit tests](./Tests/Controllers/AccountController.cs) for the [AccountController](./API/Controllers/AccountController.cs).
+- Added a unit test for the `GenerateCodeChallengerAsync` method in [Authentication](./API/Utilities/Authentication.cs).
+
+### Fixed
+- Amended the `GenerateRefreshToken_ShouldReturnNonEmptyString` test to `GenerateCodeVerifier_ShouldReturnNonEmptyString` and updated it to unit test the `GenerateCodeVerifier` method.
+- Changed the variable name within the `GenerateCodeChallengerAsync` method to better describe its value.
+- Fixed the [unit test](./Tests/Utilities/Tokens.cs) to now correctly test the `PCKEAsync` method.

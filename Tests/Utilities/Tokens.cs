@@ -29,7 +29,7 @@ namespace TMS_API.Tests
         }
 
         [TestMethod]
-        public async Task ROPCAsync_ValidCredentials_ReturnsTokenResponse()
+        public async Task PCKEAsync_ValidCredentials_ReturnsTokenResponse()
         {
             // Arrange
             var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -51,7 +51,7 @@ namespace TMS_API.Tests
 
             if (_tokenService == null) throw new ArgumentNullException(nameof(_tokenService));
             // Act
-            var result = await _tokenService.ROPCAsync("password", "username", "clientId", "clientSecret");
+            var result = await _tokenService.PCKEAsync("dummyCodeVerifier", "dummyClientID", "dummyCode");
 
             // Assert
             Assert.IsNotNull(result);

@@ -1,6 +1,7 @@
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Models;
+using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace TMS_API.Configuration
@@ -18,8 +19,8 @@ namespace TMS_API.Configuration
            {
                 ApiScope apiScope = new ApiScope
                 {
-                    Name = "default", 
-                    DisplayName = "Default API scope"
+                    Name = "api1.read", 
+                    DisplayName = "Read Access to API 1"
                 };
                 await configurationDbContext.ApiScopes.AddAsync(apiScope.ToEntity());
            }
@@ -28,9 +29,9 @@ namespace TMS_API.Configuration
            {
                 ApiResource apiResource = new ApiResource
                 {
-                    Name = "default_api",
-                    DisplayName = "Default API",
-                    Scopes = { "default" }
+                    Name = "api1",
+                    DisplayName = "my API",
+                    Scopes = { "api1.read", "api1.write" }
                 };
 
                 await configurationDbContext.ApiResources.AddAsync(apiResource.ToEntity());
@@ -40,11 +41,18 @@ namespace TMS_API.Configuration
            {
                 Client client = new Client
                 {
-                    ClientId = "default_client",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("default_secret".Sha256()) },
-                    AllowedScopes = { "default" }
+                    ClientId = "maui_client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false, // public client (.NET MAUI)
+                    RedirectUris = { "myapp://signin-callback", "https://localhost:5188/account/callback" },
+                    PostLogoutRedirectUris = { "myapp://signout-callback" },
+                    AllowedScopes = { "openid", "profile", "api1.read", "offline_access" },
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = 3600
                 };
+
+                await configurationDbContext.Clients.AddAsync(client.ToEntity());
            }
 
            if (!configurationDbContext.IdentityResources.Any())
@@ -52,7 +60,12 @@ namespace TMS_API.Configuration
                 List<IdentityResource> identityResource = new List<IdentityResource>
                 {
                     new IdentityResources.OpenId(),
-                    new IdentityResources.Profile()
+                    new IdentityResources.Profile(),
+                    new IdentityResource("custom", new[] 
+                    { 
+                        JwtClaimTypes.Name, 
+                        JwtClaimTypes.Email 
+                    })
                 };
 
                 foreach (IdentityResource resource in identityResource)

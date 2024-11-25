@@ -8,7 +8,8 @@ namespace TMS_API.Utilities
     public interface ISecurityUtils
     {
         string GenerateAPIKey();
-        string GenerateRefreshToken(int length = 64);
+        string GenerateCodeVerifier(int length = 32);
+        Task<string> GenerateCodeChallengerAsync(string codeChallenger);
         Task<byte[]> EncryptPlaintTextAsync(string plaintext, byte[] Key, byte[]? IV = null);
         Task<string> DecryptPlainTextAsync(byte[] cipherBytes, byte[] key);
         ValueTask<byte[]> GenerateHashToken(string token);
@@ -36,17 +37,27 @@ namespace TMS_API.Utilities
             }
         }
 
-        public string GenerateRefreshToken(int length = 64)
+        public string GenerateCodeVerifier(int length = 32)
         {
             byte[] randomBytes = _bytesPool.Rent(length);
             try
             {
                 _rng.GetBytes(randomBytes, 0, length);
-                return Convert.ToBase64String(randomBytes);
+                return Base64UrlEncoder.Encode(randomBytes);
             }
             finally
             {
                 _bytesPool.Return(randomBytes, clearArray: true);
+            }
+        }
+
+        public async Task<string> GenerateCodeChallengerAsync(string codeVerifier)
+        {
+            byte[] codeVerifierBytes = Encoding.UTF8.GetBytes(codeVerifier);
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] challengerBytes = await sha256.ComputeHashAsync(new MemoryStream(codeVerifierBytes));
+                return Base64UrlEncoder.Encode(challengerBytes);
             }
         }
 
