@@ -27,12 +27,21 @@ namespace TMS_API.Tests
         }
 
         [TestMethod]
-        public void GenerateRefreshToken_ShouldReturnNonEmptyString()
+        public void GenerateCodeVerifier_ShouldReturnNonEmptyString()
         {
-            string refreshToken = _securityUtils.GenerateRefreshToken();
-            
-            Assert.IsNotNull(refreshToken);
-            Assert.IsTrue(refreshToken.Length > 0);
+            string codeVerifier = _securityUtils.GenerateCodeVerifier(32);
+            Assert.IsNotNull(codeVerifier);
+            Assert.IsTrue(codeVerifier.Length > 0);
+        }
+
+        [TestMethod]
+        public async Task GenerateCodeChallengerAsync_ShouldReturnNonEmptyString()
+        {
+            string codeVerifier = _securityUtils.GenerateCodeVerifier(32);
+            string codeChallenger =  await _securityUtils.GenerateCodeChallengerAsync(codeVerifier);
+            Console.WriteLine(codeChallenger);
+            Assert.IsNotNull(codeChallenger);
+            Assert.IsTrue(codeChallenger.Length > 0);
         }
 
         [TestMethod]

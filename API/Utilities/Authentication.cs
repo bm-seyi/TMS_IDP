@@ -51,9 +51,9 @@ namespace TMS_API.Utilities
             }
         }
 
-        public async Task<string> GenerateCodeChallengerAsync(string codeChallenger)
+        public async Task<string> GenerateCodeChallengerAsync(string codeVerifier)
         {
-            byte[] codeVerifierBytes = Encoding.UTF8.GetBytes(codeChallenger);
+            byte[] codeVerifierBytes = Encoding.UTF8.GetBytes(codeVerifier);
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] challengerBytes = await sha256.ComputeHashAsync(new MemoryStream(codeVerifierBytes));

@@ -250,3 +250,13 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Notes
 - Future updates will focus on enhancing the login page's quality.
 - Unit tests will be included in the next commit.
+
+## 0.4.2
+### Added
+- Wrote [unit tests](./Tests/Controllers/AccountController.cs) for the [AccountController](./API/Controllers/AccountController.cs).
+- Added a unit test for the `GenerateCodeChallengerAsync` method in [Authentication](./API/Utilities/Authentication.cs).
+
+### Fixed
+- Amended the `GenerateRefreshToken_ShouldReturnNonEmptyString` test to `GenerateCodeVerifier_ShouldReturnNonEmptyString` and updated it to unit test the `GenerateCodeVerifier` method.
+- Changed the variable name within the `GenerateCodeChallengerAsync` method to better describe its value.
+- Fixed the [unit test](./Tests/Utilities/Tokens.cs) to now correctly test the `PCKEAsync` method.
