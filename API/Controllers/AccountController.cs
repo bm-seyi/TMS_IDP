@@ -113,9 +113,8 @@ namespace TMS_API.Controllers
                 }
                 return StatusCode((int)HttpStatusCode.InternalServerError, new {Message = ApiMessages.InternalServerErrorMessage});
             }
-           
 
-            return Redirect("/");
+            return Redirect(state);
         }
 
         [HttpPost("logout")]
