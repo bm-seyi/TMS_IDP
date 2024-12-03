@@ -45,7 +45,7 @@ namespace TMS_API.Configuration
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false, // public client (.NET MAUI)
-                    RedirectUris = { "tmsapp://callback" },
+                    RedirectUris = { "tmsapp://callback", "https://localhost:5188/account/callback" },
                     PostLogoutRedirectUris = { "tmsapp://signout-callback" },
                     AllowedScopes = { "openid", "profile", "api1.read", "offline_access" },
                     AllowOfflineAccess = true,

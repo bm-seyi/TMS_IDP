@@ -269,3 +269,12 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Removed
 - Removed the unnecessary packages: Duende.AccessTokenManagement and Duende.AccessTokenManagement.OpenIdConnect.
+
+
+## 0.4.4
+### Added
+- Introduced new [unit tests](./Tests/Controllers/AccountController.cs) for the [AccountController](./API/Controllers/AccountController.cs), focusing on testing constructor-injected dependencies.
+
+## Fixed
+- Resolved an issue where the `authorizationUrl` in the [AccountController](./API/Controllers/AccountController.cs) was using an incorrect redirect URL.
+- Included the redirect URL in the allowed redirect URLs within [IdentityServer](./API/Configurations/IdentityServer.cs).
