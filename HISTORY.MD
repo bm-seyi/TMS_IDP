@@ -260,3 +260,21 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Amended the `GenerateRefreshToken_ShouldReturnNonEmptyString` test to `GenerateCodeVerifier_ShouldReturnNonEmptyString` and updated it to unit test the `GenerateCodeVerifier` method.
 - Changed the variable name within the `GenerateCodeChallengerAsync` method to better describe its value.
 - Fixed the [unit test](./Tests/Utilities/Tokens.cs) to now correctly test the `PCKEAsync` method.
+
+
+## 0.4.3
+### Fixed
+- Updated several files to use the correct callback URI.
+- Modified the callback endpoint in [AccountController](./API/Controllers/AccountController.cs) to redirect to state.
+
+### Removed
+- Removed the unnecessary packages: Duende.AccessTokenManagement and Duende.AccessTokenManagement.OpenIdConnect.
+
+
+## 0.4.4
+### Added
+- Introduced new [unit tests](./Tests/Controllers/AccountController.cs) for the [AccountController](./API/Controllers/AccountController.cs), focusing on testing constructor-injected dependencies.
+
+## Fixed
+- Resolved an issue where the `authorizationUrl` in the [AccountController](./API/Controllers/AccountController.cs) was using an incorrect redirect URL.
+- Included the redirect URL in the allowed redirect URLs within [IdentityServer](./API/Configurations/IdentityServer.cs).

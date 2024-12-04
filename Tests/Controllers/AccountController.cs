@@ -172,6 +172,47 @@ namespace TMS_API.Tests
             sessionMock.Verify(x => x.Clear(), Times.Once);
             _mockSignInManager.Verify(x => x.SignOutAsync(), Times.Once);
         }
+
+        [TestMethod]
+        public void Constructor_ShouldThrowArgumentNullException_WhenIloggerIsNull()
+        {
+            if (_mockLogger == null) throw new ArgumentNullException(nameof(_mockLogger));
+            // Act & Assert
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(null!, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object, _mockTokenService.Object));
+        }
+
+
+        [TestMethod]
+        public void Constructor_ShouldThrowArgumentNullException_WhenSignInManagerIsNull()
+        {
+            if (_mockSignInManager == null) throw new ArgumentNullException(nameof(_mockSignInManager));
+            // Act & Assert
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, null!, _mockSecurityUtils.Object, _mockConfiguration.Object, _mockTokenService.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_ShouldThrowArgumentNullException_WhenSecurityUtilsIsNull()
+        {
+            if (_mockSecurityUtils == null) throw new ArgumentNullException(nameof(_mockSecurityUtils));
+            // Act & Assert
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, null!, _mockConfiguration.Object, _mockTokenService.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_ShouldThrowArgumentNullException_WhenConfigurationIsNull()
+        {
+            if (_mockConfiguration == null) throw new ArgumentNullException(nameof(_mockConfiguration));
+            // Act & Assert
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, null!, _mockTokenService.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_ShouldThrowArgumentNullException_WhenTokenServiceIsNull()
+        {
+            if (_mockTokenService == null) throw new ArgumentNullException(nameof(_mockTokenService));
+            // Act & Assert
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object, null!));
+        }
     }
 }
 

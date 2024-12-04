@@ -63,7 +63,7 @@ namespace TMS_API.Controllers
 
             string codeChallenger = await _securityUtils.GenerateCodeChallengerAsync(codeVerifier);
             
-            string redirectUri = _configuration["IdentityServer:RedirectUri"] ?? throw new ArgumentNullException(nameof(redirectUri));
+            string redirectUri = "https://localhost:5188/account/callback";
             string clientId = _configuration["IdentityServer:ClientId"] ?? throw new ArgumentNullException(nameof(clientId));
             string scope = "openid profile api1.read offline_access";
 
@@ -93,7 +93,6 @@ namespace TMS_API.Controllers
                 } 
 
                 TokenResponse tokenResponse = await _tokenService.PCKEAsync(codeVerifier, "maui_client", code);
-       
             
                 if (tokenResponse.AccessToken == null || tokenResponse.IdentityToken == null ||tokenResponse.RefreshToken== null)
                 {
@@ -113,9 +112,8 @@ namespace TMS_API.Controllers
                 }
                 return StatusCode((int)HttpStatusCode.InternalServerError, new {Message = ApiMessages.InternalServerErrorMessage});
             }
-           
 
-            return Redirect("/");
+            return Redirect("tmsapp://callback");
         }
 
         [HttpPost("logout")]
