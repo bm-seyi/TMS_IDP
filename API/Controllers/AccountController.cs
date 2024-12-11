@@ -16,15 +16,13 @@ namespace TMS_API.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ISecurityUtils _securityUtils;
         private readonly IConfiguration _configuration;
-        private readonly ITokenService _tokenService;
 
-        public AccountController(ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, ISecurityUtils securityUtils, IConfiguration configuration, ITokenService tokenService)
+        public AccountController(ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, ISecurityUtils securityUtils, IConfiguration configuration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _securityUtils = securityUtils ?? throw new ArgumentNullException(nameof(securityUtils));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
         [HttpGet("login")]

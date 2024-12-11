@@ -285,3 +285,10 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Removed
 - Eliminated the callback endpoint, as it is redundant in the PKCE authorization flow.
+
+## 0.4.6
+#### Fixed/Updated
+- Enhanced unit tests to align with changes introduced in [0.4.5](#045).
+
+#### Removed
+- Eliminated the redundant [token](./API/Utilities/token.cs) dependency from [AccountController](./API/Controllers/AccountController.cs).

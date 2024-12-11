@@ -63,8 +63,7 @@ namespace TMS_API.Tests
             _mockLogger.Object,
             _mockSignInManager.Object,
             _mockSecurityUtils.Object,
-            _mockConfiguration.Object,
-            _mockTokenService.Object
+            _mockConfiguration.Object
         );
 
         var context = new DefaultHttpContext();
@@ -134,25 +133,6 @@ namespace TMS_API.Tests
         }
 
         [TestMethod]
-        public async Task Callback_MissingCode_ReturnsBadRequest()
-        {
-            // Arrange
-            var sessionMock = new Mock<ISession>();
-            sessionMock
-                .Setup(x => x.TryGetValue("codeVerifier", out It.Ref<byte[]?>.IsAny))
-                .Returns(false); // Simulate missing "codeVerifier"
-            _controller.HttpContext.Session = sessionMock.Object;
-
-            // Act
-            var result = await _controller.Callback(null!, null!) as BadRequestResult;
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(400, result.StatusCode);
-        }
-
-
-        [TestMethod]
         public async Task Logout_ClearsSessionAndRedirectsToLogoutUrl()
         {
             // Arrange
@@ -178,7 +158,7 @@ namespace TMS_API.Tests
         {
             if (_mockLogger == null) throw new ArgumentNullException(nameof(_mockLogger));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(null!, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object, _mockTokenService.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(null!, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object));
         }
 
 
@@ -187,7 +167,7 @@ namespace TMS_API.Tests
         {
             if (_mockSignInManager == null) throw new ArgumentNullException(nameof(_mockSignInManager));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, null!, _mockSecurityUtils.Object, _mockConfiguration.Object, _mockTokenService.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, null!, _mockSecurityUtils.Object, _mockConfiguration.Object));
         }
 
         [TestMethod]
@@ -195,7 +175,7 @@ namespace TMS_API.Tests
         {
             if (_mockSecurityUtils == null) throw new ArgumentNullException(nameof(_mockSecurityUtils));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, null!, _mockConfiguration.Object, _mockTokenService.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, null!, _mockConfiguration.Object));
         }
 
         [TestMethod]
@@ -203,15 +183,7 @@ namespace TMS_API.Tests
         {
             if (_mockConfiguration == null) throw new ArgumentNullException(nameof(_mockConfiguration));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, null!, _mockTokenService.Object));
-        }
-
-        [TestMethod]
-        public void Constructor_ShouldThrowArgumentNullException_WhenTokenServiceIsNull()
-        {
-            if (_mockTokenService == null) throw new ArgumentNullException(nameof(_mockTokenService));
-            // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object, null!));
+            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, null!));
         }
     }
 }
