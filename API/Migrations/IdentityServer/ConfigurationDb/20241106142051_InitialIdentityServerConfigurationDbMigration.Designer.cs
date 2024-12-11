@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TMS_API.DbContext;
+using TMS_IDP.DbContext;
 
 #nullable disable
 
-namespace TMS_API.Migrations.IdentityServer.ConfigurationDb
+namespace TMS_IDP.Migrations.IdentityServer.ConfigurationDb
 {
     [DbContext(typeof(ConfigurationDbContext))]
     [Migration("20241106142051_InitialIdentityServerConfigurationDbMigration")]

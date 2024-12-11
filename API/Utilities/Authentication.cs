@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Buffers;
 
-namespace TMS_API.Utilities
+namespace TMS_IDP.Utilities
 {
     public interface ISecurityUtils
     {

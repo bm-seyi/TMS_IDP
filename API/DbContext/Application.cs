@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace TMS_API.DbContext
+namespace TMS_IDP.DbContext
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

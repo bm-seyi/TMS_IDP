@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TMS_API.Attributes
+namespace TMS_IDP.Attributes
 {
     public class NoWhiteSpaceOrEmptyAttribute : ValidationAttribute
     {

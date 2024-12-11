@@ -3,9 +3,10 @@ using Microsoft.Extensions.Configuration;
 using System.Net;
 using Moq;
 using Moq.Protected;
+using TMS_IDP.Utilities;
 
 
-namespace TMS_API.Tests
+namespace TMS_IDP.Tests
 {
 
     [TestClass]

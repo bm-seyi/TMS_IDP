@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API\TMS_API.csproj" />
+    <ProjectReference Include="..\API\TMS_IDP.csproj" />
   </ItemGroup>
 
 </Project>

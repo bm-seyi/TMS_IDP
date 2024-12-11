@@ -1,4 +1,4 @@
-# Tram Management System - API
+# Tram Management System - IDP
 
 ## Description
 
@@ -14,22 +14,11 @@ As of 22/11/2024, [ClientCredGen](https://github.com/bm-seyi/ClientCredGen) need
 - Data retrieval and manipulation
 - Secure access control
 
-## Endpoint Performance Metrics
-
-| Endpoint          | Response Time (ms) |
-|---------------    |--------------------|
-| `auth/password`   |1,318               |
-| `registration`    | 465                |
-
-
 ## Roadmap
 
 - **Code Coverage:** Eliminated redundant files and directories from code coverage.
 
 - **SignalR:** Integrated SignalR to enable real-time communication with [TMS_APP](https://github.com/bm-seyi/TMS_APP).
-
-- **TMS IDP:**  Migrated the identity server out of the main codebase and restructured it as a standalone project.
-
 
 ## Support
 

@@ -1,6 +1,6 @@
 using Microsoft.Data.SqlClient;
 
-namespace TMS_API.Utilities 
+namespace TMS_IDP.Utilities
 {
     public interface IDatabaseActions
     {   

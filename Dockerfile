@@ -8,25 +8,25 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy the main project and test project files
-COPY ["API/TMS_API.csproj", "API/"]
+COPY ["API/TMS_IDP.csproj", "API/"]
 COPY ["Tests/Tests.csproj", "Tests/"]
 
 # Restore dependencies for both the main API and test project
-RUN dotnet restore "API/TMS_API.csproj"
+RUN dotnet restore "API/TMS_IDP.csproj"
 RUN dotnet restore "Tests/Tests.csproj"
 
 # Copy the rest of the application files
 COPY . .
 
 # Build the application
-RUN dotnet build "API/TMS_API.csproj" -c Release -o /app/build
+RUN dotnet build "API/TMS_IDP.csproj" -c Release -o /app/build
 
 # Publish the application
 FROM build AS publish
-RUN dotnet publish "API/TMS_API.csproj" -c Release -o /app/publish
+RUN dotnet publish "API/TMS_IDP.csproj" -c Release -o /app/publish
 
 # Use the runtime image again to serve the app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TMS_API.dll"]
+ENTRYPOINT ["dotnet", "TMS_IDP.dll"]

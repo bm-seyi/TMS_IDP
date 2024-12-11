@@ -1,9 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Security.Cryptography;
 using System.Text;
-using TMS_API.Utilities;
+using TMS_IDP.Utilities;
 
-namespace TMS_API.Tests
+namespace TMS_IDP.Tests
 {
     [TestClass]
     public class SecurityUtilsTests

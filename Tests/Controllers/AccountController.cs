@@ -6,13 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Moq;
-using TMS_API.Controllers;
-using TMS_API.Models;
-using TMS_API.Utilities;
-using TMS_API.DbContext;
+using TMS_IDP.Controllers;
+using TMS_IDP.Models;
+using TMS_IDP.Utilities;
+using TMS_IDP.DbContext;
 
 
-namespace TMS_API.Tests
+namespace TMS_IDP.Tests
 {
     [TestClass]
     public class AccountControllerTests

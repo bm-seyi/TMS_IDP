@@ -4,7 +4,7 @@ using Duende.IdentityServer.Models;
 using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 
-namespace TMS_API.Configuration
+namespace TMS_IDP.Configuration
 {
     public static class IdentityServerSeeder
     {

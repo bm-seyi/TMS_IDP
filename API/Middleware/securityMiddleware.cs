@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Net;
-using System.Threading.Tasks;
 
-namespace TMS_API.Middleware
+namespace TMS_IDP.Middleware
 {
     public class ApiMiddleware
     {

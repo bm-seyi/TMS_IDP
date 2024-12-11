@@ -1,7 +1,7 @@
 using IdServer = Duende.IdentityServer.EntityFramework.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace TMS_API.DbContext
+namespace TMS_IDP.DbContext
 {
     public class PersistedGrantDbContext : IdServer.PersistedGrantDbContext
     {
