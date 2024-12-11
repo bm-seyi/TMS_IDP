@@ -28,6 +28,9 @@ As of 22/11/2024, [ClientCredGen](https://github.com/bm-seyi/ClientCredGen) need
 
 - **SignalR:** Integrated SignalR to enable real-time communication with [TMS_APP](https://github.com/bm-seyi/TMS_APP).
 
+- **TMS IDP:**  Migrated the identity server out of the main codebase and restructured it as a standalone project.
+
+
 ## Support
 
 For support, please contact us via email at [seyiadeyemi34@outlook.com](mailto:seyiadeyemi34@outlook.com).
