@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.RateLimiting;
-using TMS_API.Configuration;
-using TMS_API.Utilities;
-using TMS_API.Middleware;
-using TMS_API.DbContext;
+using TMS_IDP.Configuration;
+using TMS_IDP.Utilities;
+using TMS_IDP.Middleware;
+using TMS_IDP.DbContext;
 using System.Net;
 using Microsoft.IdentityModel.Tokens;
 

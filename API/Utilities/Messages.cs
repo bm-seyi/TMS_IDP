@@ -1,4 +1,4 @@
-namespace TMS_API.Utilities
+namespace TMS_IDP.Utilities
 {
     public static class ApiMessages
     {

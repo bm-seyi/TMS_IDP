@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TMS_API.DbContext;
+using TMS_IDP.DbContext;
 
 #nullable disable
 
-namespace TMS_API.Migrations
+namespace TMS_IDP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20241031223611_UpdateApplicationUser")]
@@ -158,7 +158,7 @@ namespace TMS_API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_API.Utilities.ApplicationUser", b =>
+            modelBuilder.Entity("TMS_IDP.Utilities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -234,7 +234,7 @@ namespace TMS_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("TMS_API.Utilities.ApplicationUser", null)
+                    b.HasOne("TMS_IDP.Utilities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,7 +243,7 @@ namespace TMS_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("TMS_API.Utilities.ApplicationUser", null)
+                    b.HasOne("TMS_IDP.Utilities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -258,7 +258,7 @@ namespace TMS_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TMS_API.Utilities.ApplicationUser", null)
+                    b.HasOne("TMS_IDP.Utilities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -267,7 +267,7 @@ namespace TMS_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("TMS_API.Utilities.ApplicationUser", null)
+                    b.HasOne("TMS_IDP.Utilities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

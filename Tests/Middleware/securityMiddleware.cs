@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net;
-using TMS_API.Middleware;
+using TMS_IDP.Middleware;
 
-namespace TMS_API.Tests
+namespace TMS_IDP.Tests
 {
     [TestClass]
     public class ApiMiddlewareTests

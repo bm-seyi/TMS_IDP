@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TMS_API.Models;
-using TMS_API.DbContext;
-using TMS_API.Utilities;
-using IdentityModel.Client;
-using System.Net;
+using TMS_IDP.Models;
+using TMS_IDP.DbContext;
+using TMS_IDP.Utilities;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
-namespace TMS_API.Controllers
+namespace TMS_IDP.Controllers
 {
     [Route("account")]
     public class AccountController : Controller

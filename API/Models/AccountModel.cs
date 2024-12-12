@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using TMS_API.Attributes;
+using TMS_IDP.Attributes;
 
-namespace TMS_API.Models
+namespace TMS_IDP.Models
 {
     public class Login
     {

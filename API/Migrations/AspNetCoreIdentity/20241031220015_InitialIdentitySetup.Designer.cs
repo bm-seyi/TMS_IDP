@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TMS_API.DbContext;
+using TMS_IDP.DbContext;
 
 #nullable disable
 
-namespace TMS_API.Migrations
+namespace TMS_IDP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20241031220015_InitialIdentitySetup")]

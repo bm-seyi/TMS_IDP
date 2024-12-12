@@ -287,8 +287,15 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Eliminated the callback endpoint, as it is redundant in the PKCE authorization flow.
 
 ## 0.4.6
-#### Fixed/Updated
+### Fixed/Updated
 - Enhanced unit tests to align with changes introduced in [0.4.5](#045).
 
-#### Removed
+### Removed
 - Eliminated the redundant [token](./API/Utilities/token.cs) dependency from [AccountController](./API/Controllers/AccountController.cs).
+
+## 0.4.7
+### Changes and Updates
+- The project has been renamed to **TMS_IDP**, and all namespaces within the project have been updated accordingly.
+
+### Additional Information
+- As the project now focuses solely on authentication and authorization, it will no longer be actively developed. However, it will continue to receive regular updates to enhance performance and improve the user interface.

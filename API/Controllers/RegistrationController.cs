@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Identity;
-using TMS_API.Utilities;
-using TMS_API.Models;
-using TMS_API.DbContext;
+using TMS_IDP.Utilities;
+using TMS_IDP.Models;
+using TMS_IDP.DbContext;
 using System.Net;
 
-namespace TMS_API.Controllers
+namespace TMS_IDP.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

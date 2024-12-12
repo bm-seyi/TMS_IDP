@@ -1,4 +1,4 @@
-namespace TMS_API.Configuration
+namespace TMS_IDP.Configuration
 {
     public class ApiRateLimitSettings
     {

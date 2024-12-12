@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Net;
-using TMS_API.Controllers;
-using TMS_API.DbContext;
-using TMS_API.Models;
+using TMS_IDP.Controllers;
+using TMS_IDP.DbContext;
+using TMS_IDP.Models;
 
-namespace  TMS_API.Tests
+namespace  TMS_IDP.Tests
 {
     [TestClass]
     public class RegControllerTests
