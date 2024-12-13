@@ -32,3 +32,4 @@ publish/
 Thumbs.db
 node_modules/
 .http
+Tests/

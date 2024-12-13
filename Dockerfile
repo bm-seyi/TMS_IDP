@@ -7,13 +7,11 @@ EXPOSE 5188
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy the main project and test project files
+# Copy the main project files
 COPY ["API/TMS_IDP.csproj", "API/"]
-COPY ["Tests/Tests.csproj", "Tests/"]
 
-# Restore dependencies for both the main API and test project
+# Restore dependencies for the main API project
 RUN dotnet restore "API/TMS_IDP.csproj"
-RUN dotnet restore "Tests/Tests.csproj"
 
 # Copy the rest of the application files
 COPY . .

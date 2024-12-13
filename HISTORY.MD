@@ -299,3 +299,12 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Additional Information
 - As the project now focuses solely on authentication and authorization, it will no longer be actively developed. However, it will continue to receive regular updates to enhance performance and improve the user interface.
+
+## 0.4.7
+
+### Fixed/Updated
+- Excluded the [Tests](./Tests/) directory from the [Dockerfile](./Dockerfile).
+- Revised the [.dockerignore](.dockerignore) file to exclude unnecessary folders for the project build.
+- Enhanced the [README](README.MD) with an improved description, feature list, and roadmap.
+- Updated the [CI configuration](.github/workflows/ci.yml) to ensure it can be located and added to the required status checks on GitHub.
+

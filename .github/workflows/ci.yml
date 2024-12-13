@@ -9,7 +9,8 @@ on:
             - master
 
 jobs:
-    build-and-test:
+    build-and-test: 
+        name: MsTest Unit Tests
         runs-on: windows-latest
 
         steps:
