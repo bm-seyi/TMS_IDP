@@ -2,26 +2,23 @@
 
 ## Description
 
-The Tram Management System (TMS) API is designed to handle requests and provide services for the TMS app. It facilitates communication between the app and backend systems, ensuring smooth operation and data management.
-
-The project currently uses default values to seed the database. For scopes, claims, and identity resources, in a production environment, the [ClientCredGen](https://github.com/bm-seyi/ClientCredGen) tool would be used to remove the default data from the database and replace it with the required data. 
-
-As of 22/11/2024, [ClientCredGen](https://github.com/bm-seyi/ClientCredGen) needs to be unarchived and updated to align with the latest changes in this project.
+TMS IDP is an ASP.NET Core application that serves as an identity provider and authentication system. It integrates with IdentityServer to provide secure authentication and authorization services. The project leverages ASP.NET Core's Identity framework and modern security standards, such as PKCE (Proof Key for Code Exchange), to ensure robust user authentication and management.
 
 ## Features
 
-- Request handling for the TMS app
-- Data retrieval and manipulation
-- Secure access control
+- **User Authentication:** Supports secure login and logout functionality.
+- **OAuth2 and OpenID Connect:** Utilizes IdentityServer for token-based authentication and authorization.
+- **Rate-Limited API for Registration:** Protects against abuse using configurable rate-limiting policies.
+- **User Registration:** Allows new users to register with validation and error handling.
+- **Session Management:** Implements session-based storage for secure information exchange.
+- **Custom Utilities:** Provides extensibility through reusable security utilities.
 
 ## Roadmap
-
-- **Code Coverage:** Eliminated redundant files and directories from code coverage.
-
-- **SignalR:** Integrated SignalR to enable real-time communication with [TMS_APP](https://github.com/bm-seyi/TMS_APP).
+- Enhanced UI design for the login page
+- Optimization for better performance
+- Streamlined organization and structure improvements
 
 ## Support
-
 For support, please contact us via email at [seyiadeyemi34@outlook.com](mailto:seyiadeyemi34@outlook.com).
 
 ## Contributing
