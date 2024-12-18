@@ -7,15 +7,15 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace TMS_IDP.Controllers
 {
-    [Route("account")]
-    public class AccountController : Controller
+    [Route("auth")]
+    public class AuthController : Controller
     {
-        private readonly ILogger<AccountController>  _logger;
+        private readonly ILogger<AuthController>  _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ISecurityUtils _securityUtils;
         private readonly IConfiguration _configuration;
 
-        public AccountController(ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, ISecurityUtils securityUtils, IConfiguration configuration)
+        public AuthController(ILogger<AuthController> logger, SignInManager<ApplicationUser> signInManager, ISecurityUtils securityUtils, IConfiguration configuration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));

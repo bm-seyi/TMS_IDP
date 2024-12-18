@@ -15,19 +15,19 @@ using TMS_IDP.DbContext;
 namespace TMS_IDP.Tests
 {
     [TestClass]
-    public class AccountControllerTests
+    public class AuthControllerTests
     {
-        private Mock<ILogger<AccountController>> _mockLogger = null!;
+        private Mock<ILogger<AuthController>> _mockLogger = null!;
         private Mock<SignInManager<ApplicationUser>> _mockSignInManager =null!;
         private Mock<ISecurityUtils> _mockSecurityUtils = null!;
         private Mock<IConfiguration> _mockConfiguration = null!;
         private Mock<ITokenService> _mockTokenService = null!;
-        private AccountController _controller = null!;
+        private AuthController _controller = null!;
 
     [TestInitialize]
     public void Setup()
     {
-        _mockLogger = new Mock<ILogger<AccountController>>();
+        _mockLogger = new Mock<ILogger<AuthController>>();
         _mockSecurityUtils = new Mock<ISecurityUtils>();
         _mockConfiguration = new Mock<IConfiguration>();
         _mockTokenService = new Mock<ITokenService>();
@@ -59,7 +59,7 @@ namespace TMS_IDP.Tests
             null!
         );
 
-        _controller = new AccountController(
+        _controller = new AuthController(
             _mockLogger.Object,
             _mockSignInManager.Object,
             _mockSecurityUtils.Object,
@@ -158,7 +158,7 @@ namespace TMS_IDP.Tests
         {
             if (_mockLogger == null) throw new ArgumentNullException(nameof(_mockLogger));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(null!, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthController(null!, _mockSignInManager.Object, _mockSecurityUtils.Object, _mockConfiguration.Object));
         }
 
 
@@ -167,7 +167,7 @@ namespace TMS_IDP.Tests
         {
             if (_mockSignInManager == null) throw new ArgumentNullException(nameof(_mockSignInManager));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, null!, _mockSecurityUtils.Object, _mockConfiguration.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthController(_mockLogger.Object, null!, _mockSecurityUtils.Object, _mockConfiguration.Object));
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace TMS_IDP.Tests
         {
             if (_mockSecurityUtils == null) throw new ArgumentNullException(nameof(_mockSecurityUtils));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, null!, _mockConfiguration.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthController(_mockLogger.Object, _mockSignInManager.Object, null!, _mockConfiguration.Object));
         }
 
         [TestMethod]
@@ -183,7 +183,7 @@ namespace TMS_IDP.Tests
         {
             if (_mockConfiguration == null) throw new ArgumentNullException(nameof(_mockConfiguration));
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new AccountController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, null!));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthController(_mockLogger.Object, _mockSignInManager.Object, _mockSecurityUtils.Object, null!));
         }
     }
 }
