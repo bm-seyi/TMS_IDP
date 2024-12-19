@@ -8,14 +8,14 @@ using TMS_IDP.Middleware;
 using TMS_IDP.DbContext;
 using System.Net;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Loading Environment Variables
-if (Environment.GetEnvironmentVariable("API__Key") is null)
-{
+#if DEBUG
     DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
-}
+#endif
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
 
@@ -57,19 +57,25 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddIdentityServer(options =>
 {
-    options.UserInteraction.LoginUrl = "/Account/Login";
-    options.UserInteraction.LogoutUrl = "/Account/Logout";
+    options.UserInteraction.LoginUrl = "/auth/login";
+    options.UserInteraction.LogoutUrl = "/auth/logout";
 })
 .AddAspNetIdentity<ApplicationUser>()
 .AddConfigurationStore(options =>
 {
+    options.EnablePooling = true;
     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
     sql => sql.MigrationsAssembly(migrationsAssembly));
 })
 .AddOperationalStore(options =>
 {
     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-    sql => sql.MigrationsAssembly(migrationsAssembly));
+    sql => sql.MigrationsAssembly(migrationsAssembly));   
+
+    options.EnablePooling = true;
+    options.EnableTokenCleanup = true;
+    options.TokenCleanupInterval = 600;
+    options.TokenCleanupBatchSize = 200;
 });
 
 builder.Services.AddAuthentication(options =>
@@ -79,7 +85,13 @@ builder.Services.AddAuthentication(options =>
 })
 .AddCookie("Cookies", options =>
 {
-    options.LoginPath = "/account/login";
+    options.LoginPath = "/auth/login";
+    options.LogoutPath = "/auth/logout";
+    options.AccessDeniedPath = "/auth/access-denied"; // Need to create this page
+    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    options.SlidingExpiration = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 })
 .AddOpenIdConnect("oidc", options =>
 {
@@ -89,7 +101,21 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true
+        ValidateIssuer = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ValidateAudience = true,
+        ClockSkew = TimeSpan.FromMinutes(5),
+    };
+
+    options.Events = new OpenIdConnectEvents
+    {
+        OnAuthenticationFailed = context => 
+        {
+            context.Response.Redirect("/error");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        },
     };
 });
 
@@ -103,12 +129,18 @@ builder.Services.AddAuthorization(options =>
 });
 
 // Add Session services to the container
-builder.Services.AddDistributedMemoryCache(); // Required for session state
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379"; // Redis server address
+}); // Required for session state
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 builder.Services.AddControllers();

@@ -300,11 +300,32 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Additional Information
 - As the project now focuses solely on authentication and authorization, it will no longer be actively developed. However, it will continue to receive regular updates to enhance performance and improve the user interface.
 
-## 0.4.7
 
+## 0.4.7
 ### Fixed/Updated
 - Excluded the [Tests](./Tests/) directory from the [Dockerfile](./Dockerfile).
 - Revised the [.dockerignore](.dockerignore) file to exclude unnecessary folders for the project build.
 - Enhanced the [README](README.MD) with an improved description, feature list, and roadmap.
 - Updated the [CI configuration](.github/workflows/ci.yml) to ensure it can be located and added to the required status checks on GitHub.
+
+
+## 0.4.8
+### Added
+- Conditional loading of environment variables in development using `#if DEBUG`.
+- Redis cache (`StackExchangeRedisCache`) for session state, replacing `DistributedMemoryCache`.
+- Token cleanup for Duende IdentityServer with configurable cleanup options.
+- Custom authentication failure handling with redirection to `/error`.
+
+###  Fixed/Updated
+- Updated IdentityServer login/logout URLs to `/auth/login` and `/auth/logout`.
+- Enhanced cookie security:
+  - `SecurePolicy` set to `Always`.
+  - `SameSiteMode.Lax` enforced.
+  - `ExpireTimeSpan` set to 1 hour with `SlidingExpiration`.
+  - Added `AccessDeniedPath`.
+- Strengthened session cookie security to match authentication settings.
+- Improved token validation with stricter checks and 5-minute `ClockSkew`.
+
+### Removed
+- Unconditional environment variable checks for `API__Key`.
 
