@@ -329,3 +329,13 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Removed
 - Unconditional environment variable checks for `API__Key`.
 
+## 0.4.9
+### Added
+- Introduced a new migration, `IdsIntWithGuidsKeys`, to facilitate the transition to GUID-based primary keys in the database schema. This change aligns with updates made in [Application](./API/DbContext/Application.cs) to improve data integrity and consistency.
+
+### Fixed/Updated
+- Refactored [Program](./API/Program.cs) to utilize custom user and role store classes, ensuring enhanced flexibility and maintainability of identity operations.
+- Updated [Application](./API/DbContext/Application.cs) to convert table ID columns to the `uniqueidentifier` datatype, replacing the previous `nvarchar` and `int` types. This change provides better alignment with best practices for modern database design.
+- Significantly modified the [IdsIntWithGuidsKeys migration](./API/Migrations/AspNetCoreIdentity/20241225180411_IdsIntWithGuidsKeys.cs) to accommodate the shift to GUID-based keys and ensure compatibility with the updated schema.
+
+

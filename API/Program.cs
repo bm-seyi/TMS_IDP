@@ -9,6 +9,7 @@ using TMS_IDP.DbContext;
 using System.Net;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,9 +50,11 @@ builder.Services.AddDbContext<ConfigurationDbContext>(options => options.UseSqlS
 builder.Services.AddDbContext<PersistedGrantDbContext>(options => options.UseSqlServer(connectionString));
 
 // AspNetCore Identity Configuration
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid, ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationUserToken, ApplicationRoleClaim>>()
+    .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid, ApplicationUserRole, ApplicationRoleClaim>>();
 
 // Duende Identity Server Configuration
 var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
