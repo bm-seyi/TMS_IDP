@@ -1,15 +1,17 @@
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Threading.RateLimiting;
+using System.Net;
 using TMS_IDP.Configuration;
 using TMS_IDP.Utilities;
 using TMS_IDP.Middleware;
 using TMS_IDP.DbContext;
-using System.Net;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using StackExchange.Redis;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
 
 string connectionString = builder.Configuration["ConnectionStrings:Development"] ?? throw new ArgumentNullException(nameof(connectionString));
+
+string redisPassword = builder.Configuration["Redis:Password"] ?? throw new ArgumentNullException(nameof(redisPassword));
+
+//  Dependency Injection Configuration
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
+builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
+builder.Services.AddSingleton<ICertificateService, CertificateService>();
+
 
 // Rate Limit Configuration
 var myOptions = new ApiRateLimitSettings();
@@ -134,8 +146,19 @@ builder.Services.AddAuthorization(options =>
 // Add Session services to the container
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = "localhost:6379"; // Redis server address
+    options.ConfigurationOptions = new ConfigurationOptions
+    {
+        EndPoints = { "localhost:6380" },
+        AbortOnConnectFail = false,
+        ConnectTimeout = 1000,
+        SyncTimeout = 1000,
+        AllowAdmin = true,
+        Password = redisPassword
+    };
 }); // Required for session state
+
+// Configure Data Protection
+builder.Services.ConfigureDataProtection(builder.Configuration);
 
 builder.Services.AddSession(options =>
 {
@@ -151,11 +174,6 @@ builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
-builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
-
 
 // Ensure logging services are added
 builder.Logging.ClearProviders();

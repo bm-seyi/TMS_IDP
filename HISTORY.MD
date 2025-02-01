@@ -339,3 +339,17 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Significantly modified the [IdsIntWithGuidsKeys migration](./API/Migrations/AspNetCoreIdentity/20241225180411_IdsIntWithGuidsKeys.cs) to accommodate the shift to GUID-based keys and ensure compatibility with the updated schema.
 
 
+## 0.4.10
+### Added
+- Introduced the [CertificateModel](./API/Models/CertificateModel.cs) to facilitate JSON deserialization for API responses.
+- Developed the [DataProtection](./API/ProgramExtension/DataProtection.cs) extension to enhance services and enable custom configurations for Data Protection.
+- Created the [CertificateService](./API/Utilities/CertificateService.cs) to fetch certificates from [TMS_VAULT](https://github.com/bm-seyi/TMS_VAULT).
+- Updated [appsettings](./API/appsettings.json) with new entries for retrieving secrets directly from the environment through the configuration.
+- Implemented [unit tests](./Tests/Utilities/CertificateService.cs) for the [CertificateService](./API/Utilities/CertificateService.cs).
+
+### Fixed/Updated
+- Reorganized the [program](./API/Program.cs), moving the dependency injection setup to the top of the file for improved clarity.
+- Adjusted the `AddStackExchangeRedisCache` configuration to integrate with [TMS-REDIS](https://github.com/bm-seyi/TMS_REDIS).
+
+### Notes
+- Future updates will focus on adding more unit tests and implementing a certificate renewal background service.
