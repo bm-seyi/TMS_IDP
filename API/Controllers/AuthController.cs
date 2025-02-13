@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TMS_IDP.Models;
+using TMS_IDP.Models.Controllers;
 using TMS_IDP.DbContext;
 using TMS_IDP.Utilities;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;

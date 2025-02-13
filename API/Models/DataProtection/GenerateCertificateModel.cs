@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace TMS_IDP.Models
+namespace TMS_IDP.Models.DataProtection
 {
    
-    public class CertificateData
+    public class GenerateDataModel
     {
         [JsonPropertyName("ca_chain")]
         public required List<string> CaChain { get; set; }
@@ -29,7 +27,7 @@ namespace TMS_IDP.Models
         public required string SerialNumber { get; set; }
     }
 
-    public class CertificateRequest
+    public class GenerateRequestModel
     {
         [JsonPropertyName("request_id")]
         public required string RequestId { get; set; }
@@ -44,7 +42,7 @@ namespace TMS_IDP.Models
         public int LeaseDuration { get; set; }
 
         [JsonPropertyName("data")]
-        public required CertificateData Data { get; set; }
+        public required GenerateDataModel Data { get; set; }
 
         [JsonPropertyName("wrap_info")]
         public required object WrapInfo { get; set; }

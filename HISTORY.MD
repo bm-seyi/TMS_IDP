@@ -353,3 +353,39 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Notes
 - Future updates will focus on adding more unit tests and implementing a certificate renewal background service.
+
+
+## 0.5.0
+### Added
+- **Vault Token Retrieval**: Now fetching the vault token from configuration in [Program.cs](./API/Program.cs).
+- **Models for Certificate Deserialization**: Introduced  
+  - [`ListCertificateModel.cs`](./API/Models/DataProtection/ListCertificateModel.cs)  
+  - [`RetrieveCertificateModel.cs`](./API/Models/DataProtection/RetrieveCertificateModel.cs)  
+  These models facilitate JSON deserialization within [`CertificateService.cs`](./API/Utilities/CertificateService.cs).
+- **Certificate Operations in `CertificateService`**:  
+  - `RetrieveAsync`: Fetches a certificate from Vault.  
+  - `DeleteAsync`: Removes a certificate from Vault.  
+  - `StoreAsync`: Saves a certificate to Vault.  
+  - `ListAsync`: Lists stored certificates.  
+
+### Fixed/Updated
+- **Refactored Model Organization**:  
+  - Created separate folders for models related to [Controllers](./API/Models/Controller/) and [Data Protection](./API/Models/DataProtection/) for better maintainability.  
+  - Updated namespaces accordingly.
+- **Enhanced Data Protection Logic**:  
+  - Updated [`DataProtection.cs`](./API/ProgramExtension/DataProtection.cs) to dynamically load required certificates for `ProtectKeysWithCertificate` and `UnprotectKeysWithAnyCertificate`.  
+  - Specified cryptographic algorithms used.
+- **Refactored `CertificateService`**:  
+  - Now uses `HttpClient` directly instead of `IHttpClientFactory`.  
+  - Moved configuration retrieval from `IConfiguration` to environment variables.  
+  - Replaced `ILogger` logging with `Console.WriteLine`.  
+  - Renamed `GetCertificateFromVault` to `GenerateAsync` for clarity.
+- **Updated Unit Tests**:  
+  - Refactored [`CertificateService` unit tests](./Tests/Utilities/CertificateService.cs) to align with recent changes.
+
+### Removed
+- **Dependency Cleanup**:  
+  - Removed `HttpClient` and `ICertificateService` dependency injection from [Program.cs](./API/Program.cs).  
+  - Eliminated `ICertificateService` interface in [`CertificateService.cs`](./API/Utilities/CertificateService.cs).  
+  - Removed reliance on `IHttpClientFactory` and `IConfiguration`.  
+  - Eliminated `ILogger` logging.  

@@ -1,135 +1,187 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.Configuration;
-using System.Text;
-using Moq;
-using TMS_IDP.Utilities;
-using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Text.Json;
+using System.Net.Http.Json;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Moq.Protected;
-using Azure.Core;
-using StackExchange.Redis;
+using TMS_IDP.Utilities;
+using TMS_IDP.Models.DataProtection;
 
 
 namespace TMS_IDP.Tests
 {
+
     [TestClass]
     public class CertificateServiceTests
     {
-        private Mock<IHttpClientFactory> _mockHttpClientFactory = null!;
-        private Mock<IConfiguration> _mockConfiguration = null!;
-        private Mock<ILogger<CertificateService>> _mockLogger = null!;
+        private Mock<HttpMessageHandler> _handlerMock = null!;
+        private HttpClient _httpClient = null!;
         private CertificateService _certificateService = null!;
 
-
         [TestInitialize]
-        public void Initialize()
+        public void Setup()
         {
-            _mockHttpClientFactory = new Mock<IHttpClientFactory>();
-            _mockConfiguration = new Mock<IConfiguration>();
-            _mockLogger = new Mock<ILogger<CertificateService>>();
-
-            _mockConfiguration.Setup(c => c["HashiCorp:Vault:Token"]).Returns("mock-token");
-
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            
-            var responseContent = new
-            {
-                request_id = "123456789",
-                lease_id = "123456789",
-                renewable = true,
-                lease_duration = 2764800,
-                data = new
-                {
-                    certificate = "-----BEGIN CERTIFICATE-----\nMIID5jCCAs6gAwIBAgIUPKUIBTyDnXrF1MJTboiQA63B840wDQYJKoZIhvcNAQEL\nBQAwFDESMBAGA1UEAxMJbG9jYWxob3N0MB4XDTI1MDIwMTE3MjIxN1oXDTI1MDIw\nNDE3MjI0NlowFDESMBAGA1UEAxMJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF\nAAOCAQ8AMIIBCgKCAQEA93v1VXWbbztrTAYTRUkkvYVu60XR6V0xrosJxpymPL8E\nq76weQbYUErOTprUAQab73gxijL1Iminibd1Uk2BctcvIkcYeZQUp5uZ65ltUIaA\ndUMXyFan7FSvTjwmGaoJIbKcn62VfF8XZk0jQbzNfS87YAux/KPUGwEWXV3heE8E\nuP/nNIwHWjDyWj1jBWvZljRhwz/LrarpFUXnB5dD6kPUcBVQK01P1DOT0ypNdP1I\nMZT39mDbaWPg7u4ePUguw44SY+uqSYzuNJefi1XiUFSWjyyYvkA54bg8b76Qy05S\nrAyEMHv/vV9ag3a6ci2SxAk4YvJHBvuWiyHcTAIOkQIDAQABo4IBLjCCASowDgYD\nVR0PAQH/BAQDAgOoMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNV\nHQ4EFgQUALCUm4nZT2uuRsnUmmyq18iGtCMwHwYDVR0jBBgwFoAUogGWeckkcy07\n4QYd24aP/MoABIAwagYIKwYBBQUHAQEEXjBcMC0GCCsGAQUFBzABhiFodHRwOi8v\nbG9jYWxob3N0OjgyMDAvdjEvcGtpL29jc3AwKwYIKwYBBQUHMAKGH2h0dHA6Ly9s\nb2NhbGhvc3Q6ODIwMC92MS9wa2kvY2EwGgYDVR0RBBMwEYIJbG9jYWxob3N0hwR/\nAAABMDEGA1UdHwQqMCgwJqAkoCKGIGh0dHA6Ly9sb2NhbGhvc3Q6ODIwMC92MS9w\na2kvY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQCXPPLWe89sz+t7wOLrwf1nuqiVd/RR\n6sjkHZbpSMT5IqTOedZYMcxNTAvFK5M5ofgUzm3s79FAVA7yKn8bOUAC78wAsGhk\nqfU34nHAlfGrc/wmmqYWRsDmZOvdMshJyC4PJPv9oiFNxETe3lnwufSjtxCDX9/9\nLX6uDInLKMg/mHwWMYAsqfv4j2WgDV0Hni2/lAVKmeYcCa3+EJqErDODPY7/ztZu\nW5Ki2MvfX3LMKsjE3jt5bQzroIGJhzVVOi5iJcbVp/vXU40+HE8j9+AX7wYSWJzJ\nEcUOhxHwFcTwaN074H0R+R6UC5fc8zyqqDbnMartwksb26UsWkGz68G2\n-----END CERTIFICATE-----",
-                    ca_chain = new[] { "-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEB\n-----END CERTIFICATE-----" },
-                    expiration = 1716239023,
-                    issuing_ca = "-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEC\n-----END CERTIFICATE-----",
-                    private_key = "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA93v1VXWbbztrTAYTRUkkvYVu60XR6V0xrosJxpymPL8Eq76w\neQbYUErOTprUAQab73gxijL1Iminibd1Uk2BctcvIkcYeZQUp5uZ65ltUIaAdUMX\nyFan7FSvTjwmGaoJIbKcn62VfF8XZk0jQbzNfS87YAux/KPUGwEWXV3heE8EuP/n\nNIwHWjDyWj1jBWvZljRhwz/LrarpFUXnB5dD6kPUcBVQK01P1DOT0ypNdP1IMZT3\n9mDbaWPg7u4ePUguw44SY+uqSYzuNJefi1XiUFSWjyyYvkA54bg8b76Qy05SrAyE\nMHv/vV9ag3a6ci2SxAk4YvJHBvuWiyHcTAIOkQIDAQABAoIBAQC3S6Th/a/4iz6l\n2N4O8+R1Rc1oDZcxyudQCgRciIsK9MMl3J7hlHNDzJPOXhflBpsZmqC+ZY1vRanI\ncws+wM6+Wqe7MILtEQLXPIScnU78VBHyR5XmuF+4xuPsAtqJKYmH3rzn+u17ZwZy\nq3EQcCCVthS4xxC1ODWRJpYE4tJqgk736Jtd5B/bBcqxFXmad97xbyQ6WNc4je9l\ngo42dpcexbOEHfGMFGkf1P+b6gw9bOzzWTBToGWVKndHsEHQTgG1liYRR4INNcW7\nne5dSQNyiQrqrW2gaghRnWH7T4V5hy/PWte6n68DpJrWVrqNOtclnlczJ9o7MXCg\nCuTHiJ/9AoGBAPrgdhKE3qBaM4gjUtZK6d1sv4kicMbhzN5DzfX1rldc/QBSWzAk\nknUAzbknXculxwWbB1I08uHNQ3/CKA6+BPBfd9anePBNW1r6UvnZEZXYIxQ+E/Gd\nPAC50nurRAOZdK/uHeIHpbqCvtk4jyjqDxZggoD0dl+Sa2JXmi5A3s6DAoGBAPyJ\nwuJ5tG3FaYfGzF4dw5UL1NDQi1VFm9o5u46mUwfgB0TNv370cd2FAhTfEKR5QO7U\nGfeFZVcYhB8GtSTRP+kQM/BfQxwvbWJBZS7uzRAkL06vSkJvvrOMdzx1IIi/lp2m\nSO5XcS74dcLZnnWYUFW0vrUaY1cui8OaDlLTVeJbAoGADrcDtepdNIKV6zJHNZKH\nTRmH0n9WphOwdIj9l6OlajJmFJLADn7WqE43wthwQ/WhSs7hCw1YAa6Mev3kY5j5\nqS+wU8LW8SFYbmmoXEdDJMrco99QRCe40UIU+nP9NUjW80rALfXM3re0ggEzRG8W\nG3XlsbKlDs4Dxmzk+jmL2AkCgYEA5pzK2dP3/zICT5or8FpPy2DVg6adRk5dp2eH\nLhoWwp9DJAKbN8zz2i1nHDYjVX7g2/fWiqFHTMS3ijmu26M2MJe6RmxHtYpd4hcD\n1lr96hqRFNKgBpFS3VWNYSk4f4gte2NpQDWbxx/fMgNWX96qpcl7SZiCVQ/NU97v\n65TP3fcCgYB4JE4xOhsMDpFuGzYGHwxUhSAWTjb7laq9FHfFjDdsLpB4xe4hV7w/\nmdkQcV6pFJSjrzRxCUCQF+oUho1404SfiBq77EjAgKo1Ut4raO0FYq46OZh5Jz+i\nE5zb1CbizjAYWYKog6G32WbFYMLLL9tmp98ltjXj9smkqnIgkmqmag==\n-----END RSA PRIVATE KEY-----",
-                    private_key_type = "rsa",
-                    serial_number = "123456789ABCDEF"
-                },
-                wrap_info = new { },
-                warnings = new { },
-                auth = new { },
-                mount_type = "pki"
-            };
-
-
-            var httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(JsonSerializer.Serialize(responseContent), Encoding.UTF8, "application/json")
-            };
-
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(httpResponse);
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object)
+            Environment.SetEnvironmentVariable("HashiCorp__Vault__Token", "test-token");
+            _handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            _httpClient = new HttpClient(_handlerMock.Object)
             {
                 BaseAddress = new Uri("http://localhost:8200")
             };
-
-            _mockHttpClientFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(httpClient);
-            
-            _certificateService = new CertificateService(_mockHttpClientFactory.Object, _mockConfiguration.Object, _mockLogger.Object);
+            _certificateService = new CertificateService(_httpClient);
         }
 
         [TestMethod]
-        public async Task GetCertificateFromVault_ShouldReturnCertificate()
+        public async Task GenerateAsync_Success_ReturnsCertificate()
         {
-            var certificate = await _certificateService.GetCertificateFromVault();
-            Assert.IsNotNull(certificate);
+            var mockResponse = new GenerateRequestModel
+            {
+                RequestId = "test-request-id",
+                LeaseId = "test-lease-id",
+                WrapInfo = null!,  // Assuming it's nullable
+                Warnings = null!,  // Assuming it's nullable
+                Auth = null!,      // Assuming it's nullable
+                MountType = "pki",
+                Data = new GenerateDataModel
+                {
+                    CaChain = new List<string> { "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----" },
+                    IssuingCa = "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----",
+                    SerialNumber = "test-serial-number",
+                    Expiration = 1234567890,
+                    PrivateKeyType = "rsa-2048",
+                    Certificate = "-----BEGIN CERTIFICATE-----\nMIIDtzCCAp+gAwIBAgIUJkciWqqgDacXl+3/ugv2op4JFbkwDQYJKoZIhvcNAQEL\nBQAwFjEUMBIGA1UEAxMLZXhhbXBsZS5jb20wHhcNMjUwMjEzMTk1ODU4WhcNMjUw\nMjE2MTk1OTI4WjAUMRIwEAYDVQQDEwlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQC4L/pp/G6n2AOJ8oPZAqwrNV48+vidw42uF75Df2vg\nFeJSLOvNlgARuw+H0WnBkeHPXeCLuEb8Yucl0UcXRkEX9C1J8nOl27A2TjWlQOy8\nTZ+389sx3CG5YlvqNhY1ZjlmcIfaXiCzA/c8h6jICg6cTVtBYc681BOc9Uw2ePzE\n3TYLk+kQQmfC0ltH0jxM8toR6T2iVcJuJbDXRhzvG6gE2AWQsnZ8lc7IluJe0qeA\nSJVKc1sCmQMfLlYelOaQk4ncyRKdWbVc7zCeGGGjNsbWxoOJZADDZTFxi/aCHf7I\nV1IU91OxAzIFgoepW3/5E9C7LR1zRVxYP3pDX+kr580RAgMBAAGjgf4wgfswDgYD\nVR0PAQH/BAQDAgOoMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNV\nHQ4EFgQU0K0Tyf8hlSbKeae8cPGpBJCtTmAwHwYDVR0jBBgwFoAU2AdhMZeLwUJ8\nMu0XlLzfZ41OD+kwOwYIKwYBBQUHAQEELzAtMCsGCCsGAQUFBzAChh9odHRwOi8v\nbG9jYWxob3N0OjgyMDAvdjEvcGtpL2NhMBoGA1UdEQQTMBGCCWxvY2FsaG9zdIcE\nfwAAATAxBgNVHR8EKjAoMCagJKAihiBodHRwOi8vbG9jYWxob3N0OjgyMDAvdjEv\ncGtpL2NybDANBgkqhkiG9w0BAQsFAAOCAQEAYN1kNPh4gnHnkWjYbe/YLGnACkTT\nvt9eRyEOHEz8PwQZhim3js4AINg/x4CDrg5fiM7zBKmb2+1JJPmGHNn26v9HbTX9\ndUFZEhBzdk3XnoWqXnmcHh2zqCOEngFXASTbh1v5McwZtloqOnJB2lJEvfeaYu5C\nCrp40k4Lj4zxf4doefcpRXcpfrXLGroDKZ7hwTc791rb7Bg3K3TzVsmwnqplxVQi\nG7jMFp1b7DBBecWXGUEIVovjC3td5XPB32AswPBi88mqZM5uH4F6fCwKI8Dd7+gG\nm9ZG9+lj0YiJB8Rb8h41fjo3S3Wm8v0PJO8GUTnaksqzLX8cekMTxnBISg==\n-----END CERTIFICATE-----",
+                    PrivateKey = "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAuC/6afxup9gDifKD2QKsKzVePPr4ncONrhe+Q39r4BXiUizr\nzZYAEbsPh9FpwZHhz13gi7hG/GLnJdFHF0ZBF/QtSfJzpduwNk41pUDsvE2ft/Pb\nMdwhuWJb6jYWNWY5ZnCH2l4gswP3PIeoyAoOnE1bQWHOvNQTnPVMNnj8xN02C5Pp\nEEJnwtJbR9I8TPLaEek9olXCbiWw10Yc7xuoBNgFkLJ2fJXOyJbiXtKngEiVSnNb\nApkDHy5WHpTmkJOJ3MkSnVm1XO8wnhhhozbG1saDiWQAw2UxcYv2gh3+yFdSFPdT\nsQMyBYKHqVt/+RPQuy0dc0VcWD96Q1/pK+fNEQIDAQABAoIBAQCDopZ/ZM/Y2QM+\ndbpRQB24C748KsnARuBdCc8LAmggkMNdI4mrNob6JQymbr38f7w4rckrUho5ip3U\nY0tBkQ44hmRPsx1/7hBz31Vrs4j90yRRHdEMQ10+1tMGAn3A0Dw5wDb3k8oe5rit\n4+52eOmUP5z2j2ZngdI6nP1I+RL9xjqOiMsHRsNhY9ypYgO66exxj6WxTixN+Aq0\nlhLjMl0LxKsix9iruAwmivD3HnsdN83CkokXlRyiXC36TRhgyZgoPyVuHmQsaAiQ\nZpatq4otp30CIVLY/N34sqTaSCWQWa/PRKF9fRY9mPXxe1lPEKm8yhjtEfTw6Wxo\n3aQWiy2hAoGBAPUZE+5Ly2K0BUrnTpAGjOJ+9LXcNEfG9uqws6tx/Zyxjz31F+wD\nVUFvE3lLWuqMmXcWXe/BzrxS50wf3rAXFWsQHIqX5pyaZRm1NCvrgokLbL2QGQ70\nyxf8GiZDD0D5bC2Voae1Uv24b5pyK1Pl+o7L7MGalnlt2MutZkis6849AoGBAMBh\nUGMYaFBGdNZTNQ9XGmymqfB1L23406ANOqKVzefUqGFADHhJTbbR3GTVmYDrOqlb\nVhnscXKaQF59wqYd1Xph/QJhGTqcGpXBDS9z2jIXYTErDNl2Go8MkP3x68BPDyvW\nh/wCsS29EcU5+sHt8X79JV73ZTACYeMIWVYNixtlAoGAHWUoksfcWLYmfFlJftSK\nSQ/Y4YbLbmBadMNEiSdet1BEUbX3bILp0rMzrrRu7vp13WZ9Vaf013lJ7ENWPeBG\n3VRNWAHn0phhz7d/zlSsjysjm4iQuM57HSFLMZORXMWNR9pOTQLeNTfNisRuld1b\nM40ZlA6qRV37RlJBli3HCjECgYBwbK5IquvS9cmzsn6Qj2uO0TsAncrw7nfl0bVR\nbFAfSgR4iLCA3v2+eBffCYCieVUXwZuonKeTvJcfYUkOQOMPmRH9gPb4bF+Q4net\nInwBx+3xiOICd2V/8W0OKoGGKe2Ixd9EI+KdAx/ObVqgWEhH2PIs9FC65LmFrsxe\nYJ3JjQKBgQCRbEjJuHtzjAQjQuL1wKIs/Hu8NxON0qDmPna84SyL8LEPNV4DdcA0\nrVJSI82XwQQnJN24T9ezAyRjtZzLzqnMOcpurhzLvZaQJfINsn+Bm/YoYyxUcmKX\nVDJWSf3vTWa7bQoi13Nhnacxxl699OcdlAzPmCaHQ9iVPyn2s3Afwg==\n-----END RSA PRIVATE KEY-----"
+                }
+            };
+
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = JsonContent.Create(mockResponse)
+                });
+
+            var result = await _certificateService.GenerateAsync();
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public async Task RetrieveAsync_CertificateExists_ReturnsCertificate()
+        {
+            var mockResponse = new ReceiveCertificateModel
+            {
+                RequestId = "test-request-id",
+                LeaseId = "test-lease-id",
+                WrapInfo = null!,  // Assuming it's nullable
+                Warnings = null!,  // Assuming it's nullable
+                Auth = null!,      // Assuming it's nullable
+                MountType = "pki",
+                Data = new RetrieveCertificateDataWrapper
+                {
+                    Metadata = new Metadata
+                    {
+                        CreatedTime = DateTime.Now,
+                        CustomMetadata = null!,  // Assuming it's nullable
+                        DeletionTime = "test-deletion-time"
+                    },
+                    Data = new RetrieveCertificateData
+                    {
+                        Certificate = "-----BEGIN CERTIFICATE-----\nMIIDtzCCAp+gAwIBAgIUJkciWqqgDacXl+3/ugv2op4JFbkwDQYJKoZIhvcNAQEL\nBQAwFjEUMBIGA1UEAxMLZXhhbXBsZS5jb20wHhcNMjUwMjEzMTk1ODU4WhcNMjUw\nMjE2MTk1OTI4WjAUMRIwEAYDVQQDEwlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQC4L/pp/G6n2AOJ8oPZAqwrNV48+vidw42uF75Df2vg\nFeJSLOvNlgARuw+H0WnBkeHPXeCLuEb8Yucl0UcXRkEX9C1J8nOl27A2TjWlQOy8\nTZ+389sx3CG5YlvqNhY1ZjlmcIfaXiCzA/c8h6jICg6cTVtBYc681BOc9Uw2ePzE\n3TYLk+kQQmfC0ltH0jxM8toR6T2iVcJuJbDXRhzvG6gE2AWQsnZ8lc7IluJe0qeA\nSJVKc1sCmQMfLlYelOaQk4ncyRKdWbVc7zCeGGGjNsbWxoOJZADDZTFxi/aCHf7I\nV1IU91OxAzIFgoepW3/5E9C7LR1zRVxYP3pDX+kr580RAgMBAAGjgf4wgfswDgYD\nVR0PAQH/BAQDAgOoMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNV\nHQ4EFgQU0K0Tyf8hlSbKeae8cPGpBJCtTmAwHwYDVR0jBBgwFoAU2AdhMZeLwUJ8\nMu0XlLzfZ41OD+kwOwYIKwYBBQUHAQEELzAtMCsGCCsGAQUFBzAChh9odHRwOi8v\nbG9jYWxob3N0OjgyMDAvdjEvcGtpL2NhMBoGA1UdEQQTMBGCCWxvY2FsaG9zdIcE\nfwAAATAxBgNVHR8EKjAoMCagJKAihiBodHRwOi8vbG9jYWxob3N0OjgyMDAvdjEv\ncGtpL2NybDANBgkqhkiG9w0BAQsFAAOCAQEAYN1kNPh4gnHnkWjYbe/YLGnACkTT\nvt9eRyEOHEz8PwQZhim3js4AINg/x4CDrg5fiM7zBKmb2+1JJPmGHNn26v9HbTX9\ndUFZEhBzdk3XnoWqXnmcHh2zqCOEngFXASTbh1v5McwZtloqOnJB2lJEvfeaYu5C\nCrp40k4Lj4zxf4doefcpRXcpfrXLGroDKZ7hwTc791rb7Bg3K3TzVsmwnqplxVQi\nG7jMFp1b7DBBecWXGUEIVovjC3td5XPB32AswPBi88mqZM5uH4F6fCwKI8Dd7+gG\nm9ZG9+lj0YiJB8Rb8h41fjo3S3Wm8v0PJO8GUTnaksqzLX8cekMTxnBISg==\n-----END CERTIFICATE-----",
+                        PrivateKey = "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAuC/6afxup9gDifKD2QKsKzVePPr4ncONrhe+Q39r4BXiUizr\nzZYAEbsPh9FpwZHhz13gi7hG/GLnJdFHF0ZBF/QtSfJzpduwNk41pUDsvE2ft/Pb\nMdwhuWJb6jYWNWY5ZnCH2l4gswP3PIeoyAoOnE1bQWHOvNQTnPVMNnj8xN02C5Pp\nEEJnwtJbR9I8TPLaEek9olXCbiWw10Yc7xuoBNgFkLJ2fJXOyJbiXtKngEiVSnNb\nApkDHy5WHpTmkJOJ3MkSnVm1XO8wnhhhozbG1saDiWQAw2UxcYv2gh3+yFdSFPdT\nsQMyBYKHqVt/+RPQuy0dc0VcWD96Q1/pK+fNEQIDAQABAoIBAQCDopZ/ZM/Y2QM+\ndbpRQB24C748KsnARuBdCc8LAmggkMNdI4mrNob6JQymbr38f7w4rckrUho5ip3U\nY0tBkQ44hmRPsx1/7hBz31Vrs4j90yRRHdEMQ10+1tMGAn3A0Dw5wDb3k8oe5rit\n4+52eOmUP5z2j2ZngdI6nP1I+RL9xjqOiMsHRsNhY9ypYgO66exxj6WxTixN+Aq0\nlhLjMl0LxKsix9iruAwmivD3HnsdN83CkokXlRyiXC36TRhgyZgoPyVuHmQsaAiQ\nZpatq4otp30CIVLY/N34sqTaSCWQWa/PRKF9fRY9mPXxe1lPEKm8yhjtEfTw6Wxo\n3aQWiy2hAoGBAPUZE+5Ly2K0BUrnTpAGjOJ+9LXcNEfG9uqws6tx/Zyxjz31F+wD\nVUFvE3lLWuqMmXcWXe/BzrxS50wf3rAXFWsQHIqX5pyaZRm1NCvrgokLbL2QGQ70\nyxf8GiZDD0D5bC2Voae1Uv24b5pyK1Pl+o7L7MGalnlt2MutZkis6849AoGBAMBh\nUGMYaFBGdNZTNQ9XGmymqfB1L23406ANOqKVzefUqGFADHhJTbbR3GTVmYDrOqlb\nVhnscXKaQF59wqYd1Xph/QJhGTqcGpXBDS9z2jIXYTErDNl2Go8MkP3x68BPDyvW\nh/wCsS29EcU5+sHt8X79JV73ZTACYeMIWVYNixtlAoGAHWUoksfcWLYmfFlJftSK\nSQ/Y4YbLbmBadMNEiSdet1BEUbX3bILp0rMzrrRu7vp13WZ9Vaf013lJ7ENWPeBG\n3VRNWAHn0phhz7d/zlSsjysjm4iQuM57HSFLMZORXMWNR9pOTQLeNTfNisRuld1b\nM40ZlA6qRV37RlJBli3HCjECgYBwbK5IquvS9cmzsn6Qj2uO0TsAncrw7nfl0bVR\nbFAfSgR4iLCA3v2+eBffCYCieVUXwZuonKeTvJcfYUkOQOMPmRH9gPb4bF+Q4net\nInwBx+3xiOICd2V/8W0OKoGGKe2Ixd9EI+KdAx/ObVqgWEhH2PIs9FC65LmFrsxe\nYJ3JjQKBgQCRbEjJuHtzjAQjQuL1wKIs/Hu8NxON0qDmPna84SyL8LEPNV4DdcA0\nrVJSI82XwQQnJN24T9ezAyRjtZzLzqnMOcpurhzLvZaQJfINsn+Bm/YoYyxUcmKX\nVDJWSf3vTWa7bQoi13Nhnacxxl699OcdlAzPmCaHQ9iVPyn2s3Afwg==\n-----END RSA PRIVATE KEY-----"
+                    }
+                }
+            };
+
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = JsonContent.Create(mockResponse)
+                });
+
+            var result = await _certificateService.RetrieveAsync("some/path");
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public async Task RetrieveAsync_CertificateNotFound_ReturnsNull()
+        {
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ThrowsAsync(new HttpRequestException("Not Found", null, HttpStatusCode.NotFound));
+
+            var result = await _certificateService.RetrieveAsync("invalid/path");
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task DeleteAsync_SuccessfulDeletion()
+        {
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NoContent));
+
+            await _certificateService.DeleteAsync("some/path");
         }
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
-        public async Task GetCertificateFromVault_ShouldThrowException_OnFailure()
+        public async Task DeleteAsync_FailedDeletion_ThrowsException()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            
-            var httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.BadRequest,
-                Content = new StringContent("Bad Request")
-            };
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    ReasonPhrase = "Bad Request"
+                });
 
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(httpResponse);
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            
-            _mockHttpClientFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(httpClient);
-            
-            _certificateService = new CertificateService(_mockHttpClientFactory.Object, _mockConfiguration.Object, _mockLogger.Object);
-            
-            await _certificateService.GetCertificateFromVault();
+            await _certificateService.DeleteAsync("some/path");
         }
-  
 
         [TestMethod]
-        public void Constructor_ShouldThrowArgumentNullException_WhenDependenciesAreNull()
+        public async Task ListAsync_Success_ReturnsList()
         {
-            // Arrange & Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new CertificateService(null!, _mockConfiguration.Object, _mockLogger.Object));
-            Assert.ThrowsException<ArgumentNullException>(() => new CertificateService(_mockHttpClientFactory.Object, null!, _mockLogger.Object));
-            Assert.ThrowsException<ArgumentNullException>(() => new CertificateService(_mockHttpClientFactory.Object, _mockConfiguration.Object, null!));
+            var mockResponse = new ListCertificateModel
+            {
+                RequestId = "test-request-id",
+                LeaseId = "test-lease-id",
+                WrapInfo = null!,  // Assuming it's nullable
+                Warnings = null!,  // Assuming it's nullable
+                Auth = null!,      // Assuming it's nullable
+                MountType = "pki",
+                Data = new ListDataContent
+                {
+                    Keys = new List<string> { "cert1", "cert2" }
+                }
+            };
+
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = JsonContent.Create(mockResponse)
+                });
+
+            var result = await _certificateService.ListAsync("some/path");
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, result.Count);
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        [TestMethod]
+        public async Task ListAsync_NotFound_ReturnsNull()
         {
-            _mockHttpClientFactory.Reset();
-            _mockConfiguration.Reset();
-            _mockLogger.Reset();
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ThrowsAsync(new HttpRequestException("Not Found", null, HttpStatusCode.NotFound));
+
+            var result = await _certificateService.ListAsync("invalid/path");
+
+            Assert.IsNull(result);
         }
     }
 }
