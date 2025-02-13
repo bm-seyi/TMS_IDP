@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TMS_IDP.Models
+namespace TMS_IDP.Models.Controllers
 {
     public class RegModel
     {

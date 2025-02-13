@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Moq;
 using TMS_IDP.Controllers;
-using TMS_IDP.Models;
+using TMS_IDP.Models.Controllers;
 using TMS_IDP.Utilities;
 using TMS_IDP.DbContext;
 

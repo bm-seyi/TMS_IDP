@@ -6,7 +6,7 @@ using Moq;
 using System.Net;
 using TMS_IDP.Controllers;
 using TMS_IDP.DbContext;
-using TMS_IDP.Models;
+using TMS_IDP.Models.Controllers;
 
 namespace  TMS_IDP.Tests
 {

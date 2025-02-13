@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using System.Net;
+using System.Net.Http.Headers;
+using StackExchange.Redis;
 using TMS_IDP.Configuration;
 using TMS_IDP.Utilities;
 using TMS_IDP.Middleware;
 using TMS_IDP.DbContext;
-using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,16 +24,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
 
 string connectionString = builder.Configuration["ConnectionStrings:Development"] ?? throw new ArgumentNullException(nameof(connectionString));
-
 string redisPassword = builder.Configuration["Redis:Password"] ?? throw new ArgumentNullException(nameof(redisPassword));
+string vaultToken = builder.Configuration["HashiCorp:Vault:Token"] ?? throw new ArgumentNullException(nameof(vaultToken));
 
 //  Dependency Injection Configuration
-builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
 builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
-builder.Services.AddSingleton<ICertificateService, CertificateService>();
-
 
 // Rate Limit Configuration
 var myOptions = new ApiRateLimitSettings();
@@ -157,9 +155,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
     };
 }); // Required for session state
 
-// Configure Data Protection
-builder.Services.ConfigureDataProtection(builder.Configuration);
-
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -168,6 +163,8 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
+
+await builder.Services.AddDataProtectionAsync(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
