@@ -7,7 +7,7 @@ using TMS_IDP.Utilities;
 using TMS_IDP.Models.DataProtection;
 
 
-namespace TMS_IDP.Tests
+namespace TMS_IDP.Tests.Utilities
 {
 
     [TestClass]

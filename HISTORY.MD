@@ -389,3 +389,10 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
   - Eliminated `ICertificateService` interface in [`CertificateService.cs`](./API/Utilities/CertificateService.cs).  
   - Removed reliance on `IHttpClientFactory` and `IConfiguration`.  
   - Eliminated `ILogger` logging.  
+
+##  0.5.1
+### Added  
+- Implemented [unit tests](./Tests/Attributes/NoWhiteSpace.cs) for the [NoWhiteSpace](./API/Attributes/NoWhiteSpace.cs) attribute.  
+
+### Fixed/Updated  
+- Refactored namespaces in [Tests](./Tests/) to align with best practices.  

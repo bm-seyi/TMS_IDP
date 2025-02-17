@@ -12,7 +12,7 @@ using TMS_IDP.Utilities;
 using TMS_IDP.DbContext;
 
 
-namespace TMS_IDP.Tests
+namespace TMS_IDP.Tests.Controllers
 {
     [TestClass]
     public class AuthControllerTests
