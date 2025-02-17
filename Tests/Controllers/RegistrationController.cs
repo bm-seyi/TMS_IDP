@@ -8,7 +8,7 @@ using TMS_IDP.Controllers;
 using TMS_IDP.DbContext;
 using TMS_IDP.Models.Controllers;
 
-namespace  TMS_IDP.Tests
+namespace  TMS_IDP.Tests.Controllers
 {
     [TestClass]
     public class RegControllerTests

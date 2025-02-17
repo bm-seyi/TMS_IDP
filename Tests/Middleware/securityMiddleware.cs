@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net;
 using TMS_IDP.Middleware;
 
-namespace TMS_IDP.Tests
+namespace TMS_IDP.Tests.Middleware
 {
     [TestClass]
     public class ApiMiddlewareTests

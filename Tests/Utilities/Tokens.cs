@@ -6,7 +6,7 @@ using Moq.Protected;
 using TMS_IDP.Utilities;
 
 
-namespace TMS_IDP.Tests
+namespace TMS_IDP.Tests.Utilities
 {
 
     [TestClass]
