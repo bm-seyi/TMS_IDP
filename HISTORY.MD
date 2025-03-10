@@ -390,9 +390,20 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
   - Removed reliance on `IHttpClientFactory` and `IConfiguration`.  
   - Eliminated `ILogger` logging.  
 
+
 ##  0.5.1
 ### Added  
 - Implemented [unit tests](./Tests/Attributes/NoWhiteSpace.cs) for the [NoWhiteSpace](./API/Attributes/NoWhiteSpace.cs) attribute.  
 
 ### Fixed/Updated  
-- Refactored namespaces in [Tests](./Tests/) to align with best practices.  
+- Refactored namespaces in [Tests](./Tests/) to align with best practices.
+
+
+## 0.5.2
+### Fixed/Updated
+- Removed references to `ApiMiddleware` in [Program](./API/Program.cs) and `IDatabaseActions` dependency injection.
+
+### Removed
+- Deleted `securityMiddleware.cs` from `API/Middleware/`.
+- Removed `DatabaseHelper.cs` and `DatabaseActions` from `API/Utilities/`.
+- Deleted associated unit tests for `securityMiddleware.cs` from `Tests/Middleware/`.

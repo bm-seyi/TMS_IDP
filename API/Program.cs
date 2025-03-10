@@ -10,7 +10,6 @@ using System.Net.Http.Headers;
 using StackExchange.Redis;
 using TMS_IDP.Configuration;
 using TMS_IDP.Utilities;
-using TMS_IDP.Middleware;
 using TMS_IDP.DbContext;
 
 
@@ -29,7 +28,6 @@ string vaultToken = builder.Configuration["HashiCorp:Vault:Token"] ?? throw new 
 
 //  Dependency Injection Configuration
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IDatabaseActions, DatabaseActions>();
 builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
 
 // Rate Limit Configuration
@@ -180,7 +178,6 @@ builder.Logging.AddDebug();
 var app = builder.Build();
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-//app.UseMiddleware<ApiMiddleware>();
 app.UseRateLimiter();
 
 // Configure the HTTP request pipeline.
