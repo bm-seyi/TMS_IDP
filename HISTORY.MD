@@ -407,3 +407,12 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Deleted `securityMiddleware.cs` from `API/Middleware/`.
 - Removed `DatabaseHelper.cs` and `DatabaseActions` from `API/Utilities/`.
 - Deleted associated unit tests for `securityMiddleware.cs` from `Tests/Middleware/`.
+
+## 0.5.3
+### Added
+- Added `Microsoft.EntityFrameworkCore.InMemory` package (version 8.0.13) to [Tests](./Tests/Tests.csproj) for in-memory database testing.
+- Implemented [unit tests](./Tests/Configurations/IdentityServerTests.cs) to validate the functionality of [IdentityServer](./API/Configurations/IdentityServer.cs).
+
+### Fixed/Updated
+- Improved database initialization in [IdentityServer](./API/Configurations/IdentityServer.cs) by replacing `MigrateAsync()` with `EnsureCreatedAsync()` and adding a check for relational databases before applying migrations.
+- Fixed inconsistent indentation in [IdentityServer](./API/Configurations/IdentityServer.cs) for better readability.

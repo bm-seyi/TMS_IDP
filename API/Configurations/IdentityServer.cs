@@ -10,23 +10,27 @@ namespace TMS_IDP.Configuration
     {
         public async static Task Seed (IServiceProvider serviceProvider)
         {
-           await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
-           ConfigurationDbContext configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+            await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
+            ConfigurationDbContext configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
 
-           await configurationDbContext.Database.MigrateAsync();
+            await configurationDbContext.Database.EnsureCreatedAsync();
+            if (configurationDbContext.Database.IsRelational()) 
+            {
+                await configurationDbContext.Database.MigrateAsync();
+            }
 
-           if (!configurationDbContext.ApiScopes.Any())
-           {
+            if (!configurationDbContext.ApiScopes.Any())
+            {
                 ApiScope apiScope = new ApiScope
                 {
                     Name = "api1.read", 
                     DisplayName = "Read Access to API 1"
                 };
                 await configurationDbContext.ApiScopes.AddAsync(apiScope.ToEntity());
-           }
+            }
 
-           if (!configurationDbContext.ApiResources.Any())
-           {
+            if (!configurationDbContext.ApiResources.Any())
+            {
                 ApiResource apiResource = new ApiResource
                 {
                     Name = "api1",
@@ -35,10 +39,10 @@ namespace TMS_IDP.Configuration
                 };
 
                 await configurationDbContext.ApiResources.AddAsync(apiResource.ToEntity());
-           }
+            }
 
-           if  (!configurationDbContext.Clients.Any())
-           {
+            if  (!configurationDbContext.Clients.Any())
+            {
                 Client client = new Client
                 {
                     ClientId = "maui_client",
@@ -53,10 +57,10 @@ namespace TMS_IDP.Configuration
                 };
 
                 await configurationDbContext.Clients.AddAsync(client.ToEntity());
-           }
+            }
 
-           if (!configurationDbContext.IdentityResources.Any())
-           {
+            if (!configurationDbContext.IdentityResources.Any())
+            {
                 List<IdentityResource> identityResource = new List<IdentityResource>
                 {
                     new IdentityResources.OpenId(),
@@ -72,9 +76,9 @@ namespace TMS_IDP.Configuration
                 {
                     await configurationDbContext.IdentityResources.AddAsync(resource.ToEntity());
                 }
-           }
+            }
 
-            await configurationDbContext.SaveChangesAsync();
-        }
+                await configurationDbContext.SaveChangesAsync();
+            }
     }
 }
