@@ -162,7 +162,9 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-await builder.Services.AddDataProtectionAsync(builder.Configuration);
+ICertificateService certificateService = new CertificateService(new HttpClient());
+IConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"localhost:6379,password={redisPassword}");
+await builder.Services.AddDataProtectionAsync(certificateService, redis);
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();

@@ -8,7 +8,16 @@ using TMS_IDP.Models.DataProtection;
 
 namespace TMS_IDP.Utilities
 {
-    public class CertificateService
+    public interface ICertificateService
+    {
+        Task<X509Certificate2> GenerateAsync();
+        Task<X509Certificate2?> RetrieveAsync(string path);
+        Task DeleteAsync(string path);
+        Task StoreAsync(string path, X509Certificate2 certificate);
+        Task<List<string>?> ListAsync(string path);
+    }
+
+    public class CertificateService : ICertificateService
     {
         private readonly HttpClient _client;
         
