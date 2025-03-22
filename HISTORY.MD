@@ -416,3 +416,24 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Fixed/Updated
 - Improved database initialization in [IdentityServer](./API/Configurations/IdentityServer.cs) by replacing `MigrateAsync()` with `EnsureCreatedAsync()` and adding a check for relational databases before applying migrations.
 - Fixed inconsistent indentation in [IdentityServer](./API/Configurations/IdentityServer.cs) for better readability.
+
+## 0.5.4
+### Added:
+- Added a new unit test class `ProgramExtensionsTests` for testing the `AddDataProtectionAsync` extension method.
+- Introduced various test methods to verify different scenarios for the `AddDataProtectionAsync` method:
+  - **AddDataProtectionAsync_UsesExistingValidCertificate**: Ensures the existing valid certificate is used when available.
+  - **AddDataProtectionAsync_GeneratesNewCertificate_WhenNoneExists**: Verifies the generation of a new certificate when no existing certificate is found.
+  - **AddDataProtectionAsync_ReplacesExpiredCertificate**: Ensures expired certificates are replaced with a newly generated certificate and that the expired certificate is deleted.
+  - **AddDataProtectionAsync_RetrieveArchivedCertificate**: Verifies retrieval of archived certificates, ensuring the method checks multiple potential certificates.
+- Mocked `ICertificateService` and `IConnectionMultiplexer` using `Moq` for unit testing.
+- Added helper method `CreateTestCertificate` to generate a self-signed certificate for testing purposes.
+
+### Fixed/Updated:
+- Updated `Program.cs` to pass instances of `ICertificateService` and `IConnectionMultiplexer` into the `AddDataProtectionAsync` method.
+- Refactored `AddDataProtectionAsync` in `ProgramExtension/DataProtection.cs` to support both `ICertificateService` and `IConnectionMultiplexer` parameters instead of using `IConfiguration` for Redis configuration.
+- Moved Redis password configuration from `ProgramExtension/DataProtection.cs` to `Program.cs` for better clarity and organization of settings.
+- Adjusted certificate retrieval and generation flow to ensure it works properly with the new dependencies (Redis and CertificateService).
+
+### Removed:
+- Removed unnecessary `IConfiguration` dependency for Redis configuration within `AddDataProtectionAsync`.
+

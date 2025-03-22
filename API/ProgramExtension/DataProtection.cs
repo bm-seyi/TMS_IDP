@@ -7,14 +7,11 @@ using TMS_IDP.Utilities;
 
 public static class ServiceCollectionExtensions
 {
-    public static async Task AddDataProtectionAsync(this IServiceCollection services, IConfiguration configuration)
-    {
-        HttpClient httpClient = new HttpClient();
-        CertificateService certificateService = new CertificateService(httpClient);
-
+    public static async Task AddDataProtectionAsync(this IServiceCollection services, ICertificateService certificateService, IConnectionMultiplexer redis)
+    {        
         string path = "/v1/secret/data/latest/certificate";
         X509Certificate2? certificate = await certificateService.RetrieveAsync(path);
-
+    
         if (certificate == null)
         {
             certificate = await certificateService.GenerateAsync();
@@ -40,9 +37,6 @@ public static class ServiceCollectionExtensions
             }
         }
         
-        string redisPassword = configuration["Redis:Password"] ?? throw new ArgumentNullException(nameof(redisPassword));
-        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"localhost:6379,password={redisPassword}");
-
         services.AddDataProtection()
             .SetApplicationName("TMS_IDP")
             .ProtectKeysWithCertificate(certificate)
