@@ -6,18 +6,21 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using System.Net;
-using System.Net.Http.Headers;
 using StackExchange.Redis;
-using TMS_IDP.Configuration;
 using TMS_IDP.Utilities;
 using TMS_IDP.DbContext;
-
+using TMS_IDP.Models.RateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Loading Environment Variables
 #if DEBUG
-    DotNetEnv.Env.Load(Path.Combine(Environment.CurrentDirectory, "Resources/.env"));
+string? parentDirectory = Directory.GetParent(Environment.CurrentDirectory)?.FullName;
+if (string.IsNullOrWhiteSpace(parentDirectory))
+{
+    throw new DirectoryNotFoundException("Parent directory not found.");
+}
+DotNetEnv.Env.Load(Path.Combine(parentDirectory, ".env"));
 #endif
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
@@ -26,12 +29,8 @@ string connectionString = builder.Configuration["ConnectionStrings:Development"]
 string redisPassword = builder.Configuration["Redis:Password"] ?? throw new ArgumentNullException(nameof(redisPassword));
 string vaultToken = builder.Configuration["HashiCorp:Vault:Token"] ?? throw new ArgumentNullException(nameof(vaultToken));
 
-//  Dependency Injection Configuration
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddTransient<ISecurityUtils, SecurityUtils>();
-
 // Rate Limit Configuration
-var myOptions = new ApiRateLimitSettings();
+tokenBucketRateLimitOptions myOptions = new tokenBucketRateLimitOptions();
 builder.Configuration.GetSection("ApiRateLimitSettings").Bind(myOptions);
 
 builder.Services.AddRateLimiter(options =>
@@ -98,7 +97,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.LoginPath = "/auth/login";
     options.LogoutPath = "/auth/logout";
-    options.AccessDeniedPath = "/auth/access-denied"; // Need to create this page
+    options.AccessDeniedPath = "/auth/access-denied"; // TODO: Create this page
     options.ExpireTimeSpan = TimeSpan.FromHours(1);
     options.SlidingExpiration = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -130,13 +129,18 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("ApiScope", policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ApiScope", policy =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("scope", "api1.read");
     });
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/auth/Login";
+    options.LogoutPath = "/auth/Logout";
+    options.AccessDeniedPath = "/auth/AccessDenied"; // TODO: Create this page
 });
 
 // Add Session services to the container
@@ -187,7 +191,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    await IdentityServerSeeder.Seed(app.Services); // Add Identity Server Seeding
 }
 
 app.UseIdentityServer();

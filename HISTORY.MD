@@ -437,3 +437,19 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Removed:
 - Removed unnecessary `IConfiguration` dependency for Redis configuration within `AddDataProtectionAsync`.
 
+## 0.6.0
+### Added
+- Added `.vscode/` directory to `.gitignore` to exclude VS Code settings from version control.
+
+### Fixed/Updated
+- Added `[ExcludeFromCodeCoverage]` attribute to all identity-related classes in `API/DbContext` to exclude them from code coverage analysis.
+- Updated `LoginViewModel` in `API/Models/Controller/AccountModel.cs` with simplified validation attributes and default values.
+- Updated `Program.cs` to load environment variables from the parent directory in debug mode and improved rate limiting configuration.
+- Simplified login view (`API/Views/Auth/login.cshtml`) by removing complex validation and using a more straightforward form.
+-  Refactored `AuthController.cs` and its associated login/logout functionality. This has been renamed to `AccountController.cs`
+
+### Removed
+- Removed `IdentityServer.cs` and `rateLimit.cs` configuration files from `API/Configurations/` as they are no longer needed.
+- Removed `Authentication.cs` and `token.cs` utility classes from `API/Utilities/` as they are no longer used.
+- Removed all test files (`IdentityServerTests.cs`, `AuthController.cs`, `RegistrationController.cs`, `Authentication.cs`, `Tokens.cs`) from the `Tests/` directory as they are no longer relevant.
+- Removed `ClientSecret` property from `RegistrationModel.cs` as it's no longer required.

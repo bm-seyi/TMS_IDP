@@ -12,3 +12,4 @@ obj/
 TMS_API.http
 tempkey.jwk
 node_modules/
+.vscode/

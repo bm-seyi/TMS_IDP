@@ -1,23 +1,17 @@
-@model TMS_IDP.Models.Controllers.Login
+@model TMS_IDP.Models.Controllers.LoginViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "_Layout";
+    ViewData["Title"] = "Login";
+
 }
 
 <h2>Login</h2>
-<form asp-action="Login" method="post" >
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <input type="hidden" asp-for="ReturnUrl" />
+<form asp-action="Login" method="post">
+    <input name="username" placeholder="Username" />
+    <input name="password" type="password" placeholder="Password" />
+    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
     <button type="submit">Login</button>
 </form>
 

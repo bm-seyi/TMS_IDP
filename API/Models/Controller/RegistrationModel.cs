@@ -17,10 +17,6 @@ namespace TMS_IDP.Models.Controllers
         [StringLength(100, ErrorMessage = "ClientId should not exceed 100 characters.")]
         public required string ClientId { get; set; }
 
-        [Required(ErrorMessage = "ClientSecret is required")]
-        [StringLength(100, ErrorMessage = "ClientSecret should not exceed 100 characters.")]
-        public required string ClientSecret { get; set; } 
-
     }
 }
 
