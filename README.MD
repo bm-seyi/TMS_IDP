@@ -18,13 +18,6 @@ TMS IDP is an ASP.NET Core application that serves as an identity provider and a
 - Optimization for better performance
 - Streamlined organization and structure improvements
 
-## Support
-For support, please contact us via email at [seyiadeyemi34@outlook.com](mailto:seyiadeyemi34@outlook.com).
-
-## Contributing
-
-If you're interested in contributing to this project, please reach out via [seyiadeyemi34@outlook.com](mailto:seyiadeyemi34@outlook.com).
-
 ## License
 
 This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.

@@ -453,3 +453,15 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Removed `Authentication.cs` and `token.cs` utility classes from `API/Utilities/` as they are no longer used.
 - Removed all test files (`IdentityServerTests.cs`, `AuthController.cs`, `RegistrationController.cs`, `Authentication.cs`, `Tokens.cs`) from the `Tests/` directory as they are no longer relevant.
 - Removed `ClientSecret` property from `RegistrationModel.cs` as it's no longer required.
+
+## 0.6.1
+### Added
+- Injected `IIdentityServerInteractionService` into `AuthController`.
+- Added `[ValidateAntiForgeryToken]` attribute to the `POST /login` endpoint.
+- Implemented return URL validation during login using `Url.IsLocalUrl` and `_interactionService.IsValidReturnUrl`.
+
+### Fixed/Updated
+- Renamed `AccountController` to `AuthController`.
+- Updated logger dependency from `ILogger<AccountController>` to `ILogger<AuthController>`.
+- Updated constructor to accept `IIdentityServerInteractionService`.
+- Improved login flow to ensure only safe URLs are redirected after successful authentication.
