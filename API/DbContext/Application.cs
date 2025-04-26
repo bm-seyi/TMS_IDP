@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace TMS_IDP.DbContext
 {
+    [ExcludeFromCodeCoverage]
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationRoleClaim, ApplicationUserToken>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -48,18 +50,31 @@ namespace TMS_IDP.DbContext
 
     }
 
+    [ExcludeFromCodeCoverage]
     public class ApplicationUser : IdentityUser<Guid> { } 
+
+    [ExcludeFromCodeCoverage]
     public class ApplicationRole : IdentityRole<Guid> { }
+
+    [ExcludeFromCodeCoverage]
     public class ApplicationRoleClaim : IdentityRoleClaim<Guid>
     { 
         public new Guid Id { get; set; }
     }
+
+    [ExcludeFromCodeCoverage]
     public class ApplicationUserClaim : IdentityUserClaim<Guid>
     {
         public new Guid Id { get; set; }
     }
+
+    [ExcludeFromCodeCoverage]
     public class ApplicationUserToken : IdentityUserToken<Guid> { }
+
+    [ExcludeFromCodeCoverage]
     public class ApplicationUserRole : IdentityUserRole<Guid> { }
+
+    [ExcludeFromCodeCoverage]
     public class ApplicationUserLogin : IdentityUserLogin<Guid> { }
 
 }

@@ -1,20 +1,18 @@
 using System.ComponentModel.DataAnnotations;
-using TMS_IDP.Attributes;
 
 namespace TMS_IDP.Models.Controllers
 {
-    public class Login
+    public class LoginViewModel
     {
-        [Required]
-        [EmailAddress(ErrorMessage = "Email address provided is in the incorrect format")]
-        [NoWhiteSpaceOrEmpty]
-        [DataType(DataType.EmailAddress)]
-        public required string Email { get; set; }
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [Display(Name = "Email Address")]
+        public string Email { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
-        [NoWhiteSpaceOrEmpty]
-        public required string Password { get; set; }
+        [Display(Name = "Password")]
+        public string Password { get; set; } = string.Empty;
 
         public string? ReturnUrl { get; set; }
     }
