@@ -8,7 +8,7 @@ using System.Threading.RateLimiting;
 using System.Net;
 using StackExchange.Redis;
 using TMS_IDP.Utilities;
-using TMS_IDP.DbContext;
+using TMS_MIGRATE.DbContext;
 using TMS_IDP.Models.RateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,7 +64,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid, ApplicationUserRole, ApplicationRoleClaim>>();
 
 // Duende Identity Server Configuration
-var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddIdentityServer(options =>
 {
     options.UserInteraction.LoginUrl = "/auth/login";
@@ -75,13 +74,12 @@ builder.Services.AddIdentityServer(options =>
 {
     options.EnablePooling = true;
     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-    sql => sql.MigrationsAssembly(migrationsAssembly));
+    sql => sql.MigrationsAssembly(typeof(ConfigurationDbContext).Assembly.FullName));
 })
 .AddOperationalStore(options =>
 {
     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-    sql => sql.MigrationsAssembly(migrationsAssembly));   
-
+    sql => sql.MigrationsAssembly(typeof(PersistedGrantDbContext).Assembly.FullName));   
     options.EnablePooling = true;
     options.EnableTokenCleanup = true;
     options.TokenCleanupInterval = 600;

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TMS_IDP.DbContext;
+using TMS_MIGRATE.DbContext;
 
 #nullable disable
 
-namespace TMS_IDP.Migrations.IdentityServer.PersistedGrantDb
+namespace TMS_MIGRATE.Migrations.IdentityServer.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
     [Migration("20241106142222_InitialIdentityServerPersistedGrantDbMigration")]

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
-using TMS_IDP.DbContext;
+using TMS_MIGRATE.DbContext;
 using TMS_IDP.Models.Controllers;
 using Duende.IdentityServer.Services;
 
@@ -42,7 +42,7 @@ namespace TMS_IDP.Controllers
                 if (result.Succeeded)
                 {
                     // Validate the return URL
-                    if (!Url.IsLocalUrl(loginViewModel.ReturnUrl) && !_interactionService.IsValidReturnUrl(loginViewModel.ReturnUrl))
+                    if (!_interactionService.IsValidReturnUrl(loginViewModel.ReturnUrl))
                     {
                         return Redirect("~/");
                     }

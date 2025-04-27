@@ -454,6 +454,7 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Removed all test files (`IdentityServerTests.cs`, `AuthController.cs`, `RegistrationController.cs`, `Authentication.cs`, `Tokens.cs`) from the `Tests/` directory as they are no longer relevant.
 - Removed `ClientSecret` property from `RegistrationModel.cs` as it's no longer required.
 
+
 ## 0.6.1
 ### Added
 - Injected `IIdentityServerInteractionService` into `AuthController`.
@@ -465,3 +466,20 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Updated logger dependency from `ILogger<AccountController>` to `ILogger<AuthController>`.
 - Updated constructor to accept `IIdentityServerInteractionService`.
 - Improved login flow to ensure only safe URLs are redirected after successful authentication.
+
+
+## 0.7.0
+### Added
+- Migrated database context and related files to new project `TMS_MIGRATE`
+- Updated project to .NET 9.0
+- Added project reference to TMS_MIGRATE in API project
+- Created console app `TMS_SEED` which is responsible for seeding the database. 
+
+### Changed/Updated
+- Updated all NuGet packages to latest versions
+- Modified Identity Server configuration to use migrations from TMS_MIGRATE assembly
+- Changed namespace from `TMS_IDP.DbContext` to `TMS_MIGRATE.DbContext` in controllers
+- Updated Program.cs to use correct migration assemblies
+
+### Removed
+- Removed all entity configuration files from original DbContext folder

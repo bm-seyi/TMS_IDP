@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TMS_IDP.DbContext;
+using TMS_MIGRATE.DbContext;
 
 #nullable disable
 
-namespace TMS_IDP.Migrations
+namespace TMS_MIGRATE.Migrations.AspNetCoreIdentity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241225180411_IdsIntWithGuidsKeys")]
+    partial class IdsIntWithGuidsKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace TMS_IDP.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationRole", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +54,7 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationRoleClaim", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationRoleClaim", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -74,7 +77,7 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUser", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -141,7 +144,7 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserClaim", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserClaim", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,7 +167,7 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserLogin", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -185,7 +188,7 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserRole", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -200,7 +203,7 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserToken", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserToken", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -219,51 +222,51 @@ namespace TMS_IDP.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationRoleClaim", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationRoleClaim", b =>
                 {
-                    b.HasOne("TMS_IDP.DbContext.ApplicationRole", null)
+                    b.HasOne("TMS_MIGRATE.DbContext.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserClaim", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserClaim", b =>
                 {
-                    b.HasOne("TMS_IDP.DbContext.ApplicationUser", null)
+                    b.HasOne("TMS_MIGRATE.DbContext.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserLogin", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserLogin", b =>
                 {
-                    b.HasOne("TMS_IDP.DbContext.ApplicationUser", null)
+                    b.HasOne("TMS_MIGRATE.DbContext.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserRole", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserRole", b =>
                 {
-                    b.HasOne("TMS_IDP.DbContext.ApplicationRole", null)
+                    b.HasOne("TMS_MIGRATE.DbContext.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TMS_IDP.DbContext.ApplicationUser", null)
+                    b.HasOne("TMS_MIGRATE.DbContext.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TMS_IDP.DbContext.ApplicationUserToken", b =>
+            modelBuilder.Entity("TMS_MIGRATE.DbContext.ApplicationUserToken", b =>
                 {
-                    b.HasOne("TMS_IDP.DbContext.ApplicationUser", null)
+                    b.HasOne("TMS_MIGRATE.DbContext.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
