@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Identity;
 using TMS_IDP.Utilities;
 using TMS_IDP.Models.Controllers;
-using TMS_IDP.DbContext;
+using TMS_MIGRATE.DbContext;
 using System.Net;
 
 namespace TMS_IDP.Controllers

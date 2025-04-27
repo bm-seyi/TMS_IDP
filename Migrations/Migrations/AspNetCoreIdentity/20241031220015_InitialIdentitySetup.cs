@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TMS_IDP.Migrations
+namespace TMS_MIGRATE.Migrations
 {
     /// <inheritdoc />
     public partial class InitialIdentitySetup : Migration

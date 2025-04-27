@@ -2,7 +2,7 @@ using IdServer = Duende.IdentityServer.EntityFramework.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TMS_IDP.DbContext
+namespace TMS_MIGRATE.DbContext
 {
     [ExcludeFromCodeCoverage]
     public class PersistedGrantDbContext : IdServer.PersistedGrantDbContext

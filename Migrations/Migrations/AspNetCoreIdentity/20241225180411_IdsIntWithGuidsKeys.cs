@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TMS_IDP.Migrations.AspNetCoreIdentity
+namespace TMS_MIGRATE.Migrations.AspNetCoreIdentity
 {
     /// <inheritdoc />
     public partial class IdsIntWithGuidsKeys : Migration
