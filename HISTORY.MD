@@ -483,3 +483,7 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 
 ### Removed
 - Removed all entity configuration files from original DbContext folder
+
+## 0.7.1
+### Added
+- Added `permissions: contents: read` to `.github/workflows/ci.yml` and `.github/workflows/dependency-review.yml` to explicitly define GitHub Actions permissions.
