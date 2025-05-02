@@ -518,3 +518,7 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Removed
 - Deleted `RegistrationViewModel.cs` from `TMS_IDP.Models.ViewModel` in favor of `RegisterViewModel`.
 - Removed unused authorization policy for `ApiScope` in `Program.cs`.
+
+## 0.7.4
+### Fixed/Updated
+- Sanitized email input in registration logging to prevent newline injection (`\r`, `\n`) vulnerabilities in `RegistrationController`.

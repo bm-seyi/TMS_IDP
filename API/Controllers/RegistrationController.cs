@@ -61,7 +61,7 @@ namespace TMS_IDP.Controllers
                 return View(registrationModel);
             }
 
-            _logger.LogInformation("New user registered: {Email}", registrationModel.Email);
+            _logger.LogInformation("New user registered: {Email}", registrationModel.Email.Replace("\r", "").Replace("\n", ""));
             return RedirectToAction("Login", "Auth", new { registrationModel.ReturnUrl });
         }
     }
