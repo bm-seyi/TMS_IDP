@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TMS_IDP.Models.Controllers
+namespace TMS_IDP.Models.ViewModel
 {
     public class LoginViewModel
     {

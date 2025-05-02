@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using TMS_MIGRATE.DbContext;
-using TMS_IDP.Models.Controllers;
+using TMS_IDP.Models.ViewModel;
 using Duende.IdentityServer.Services;
 
 namespace TMS_IDP.Controllers
@@ -35,24 +35,26 @@ namespace TMS_IDP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromForm] LoginViewModel loginViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(loginViewModel);
+            }
+
             var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
             if (user != null)
             {
                 SignInResult result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
                 if (result.Succeeded)
                 {
-                    // Validate the return URL
                     if (!_interactionService.IsValidReturnUrl(loginViewModel.ReturnUrl))
                     {
                         return Redirect("~/");
                     }
-                    
                     return Redirect(loginViewModel.ReturnUrl ?? "~/");
                 }
             }
-
             ModelState.AddModelError("", "Invalid login attempt");
-            return View();
+            return View(loginViewModel);
         }
 
         [HttpPost("logout")]
