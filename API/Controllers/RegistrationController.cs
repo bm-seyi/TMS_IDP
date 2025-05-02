@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Identity;
-using TMS_IDP.Utilities;
-using TMS_IDP.Models.Controllers;
+using TMS_IDP.Models.ViewModel;
 using TMS_MIGRATE.DbContext;
-using System.Net;
 
 namespace TMS_IDP.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class RegistrationController : ControllerBase
+
+    [Route("auth")]
+    public class RegistrationController : Controller
     {
         private readonly ILogger<RegistrationController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -20,42 +17,52 @@ namespace TMS_IDP.Controllers
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        [EnableRateLimiting("TokenPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] RegModel data)
+        [HttpGet("register")]
+        public IActionResult Register(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost("register")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register([FromForm] RegisterViewModel registrationModel)
+        {
+            ViewData["ReturnUrl"] = registrationModel.ReturnUrl;
+
+            if (registrationModel.Password != registrationModel.ConfirmPassword)
+            {
+                _logger.LogWarning("Passwords do not match for user: {Email}", registrationModel.Email.Replace("\r", "").Replace("\n", ""));
+                ModelState.AddModelError(string.Empty, "Passwords do not match.");
+            }
+
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning(ApiMessages.InvalidModelStateLog, ModelState.Values.SelectMany(e => e.Errors).Select(e => e.ErrorMessage));
-                return BadRequest(new {Message = ApiMessages.InvalidModelStateMessage, Details = ModelState});
+                _logger.LogWarning("Model state is invalid for user: {Email}", registrationModel.Email.Replace("\r", "").Replace("\n", ""));
+                return View(registrationModel);
             }
-            try
+
+
+            ApplicationUser user = new ApplicationUser
             {
-                ApplicationUser user = new ApplicationUser
-                {
-                    Email = data.Email,
-                    UserName = data.Email,
-                };
+                UserName = registrationModel.Email,
+                Email = registrationModel.Email,
+            };
 
-                var result = await _userManager.CreateAsync(user, data.Password);
-                if (!result.Succeeded)
+            IdentityResult result = await _userManager.CreateAsync(user, registrationModel.Password);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
                 {
-                    throw new Exception(result.Errors.Any() ? string.Join(" ",result.Errors.Select(e => e.Description)) : "User Creation Failed");
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
 
-                _logger.LogInformation("User Registered Successfully");
-                return Ok(new {Message = "User Registered Successfully"});
-
-            } 
-            catch (Exception ex)
-            {   
-                _logger.LogError(ApiMessages.ErrorMessageLog, ex.Message);
-                if (ex.InnerException != null)
-                {
-                    _logger.LogError(ApiMessages.InternalErrorMessageLog, ex.InnerException.Message);
-                }
-                return StatusCode((int)HttpStatusCode.InternalServerError, new {Message = ApiMessages.InternalServerErrorMessage});
+                return View(registrationModel);
             }
+
+            _logger.LogInformation("New user registered: {Email}", registrationModel.Email.Replace("\r", "").Replace("\n", ""));
+            return RedirectToAction("Login", "Auth", new { registrationModel.ReturnUrl });
         }
     }
 }

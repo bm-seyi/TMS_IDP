@@ -35,7 +35,6 @@ namespace TMS_IDP.Utilities
             Console.WriteLine("HttpClient Configured for Vault API");
         }
         
-
         public async Task<X509Certificate2> GenerateAsync()
         {
 

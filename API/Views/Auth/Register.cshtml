@@ -1,20 +1,16 @@
-@model TMS_IDP.Models.ViewModel.LoginViewModel
+@model TMS_IDP.Models.ViewModel.RegisterViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Login";
-
+    ViewData["Title"] = "Register";
 }
 
-<h2>Login</h2>
+<h2>Register</h2>
 <form asp-action="Login" method="post">
     <input name="username" placeholder="Username" />
+    <input name="confirmPassword" type="password" placeholder="Confirm Password" />
     <input name="password" type="password" placeholder="Password" />
     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
     <button type="submit">Login</button>
 </form>
-
-@section scripts {
-    <script src="~/js/login.js"></script>
-}
