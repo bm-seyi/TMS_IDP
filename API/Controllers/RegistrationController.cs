@@ -26,14 +26,22 @@ namespace TMS_IDP.Controllers
 
         [HttpPost("register")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([FromForm] RegistrationViewModel registrationModel)
+        public async Task<IActionResult> Register([FromForm] RegisterViewModel registrationModel)
         {
             ViewData["ReturnUrl"] = registrationModel.ReturnUrl;
 
+            if (registrationModel.Password != registrationModel.ConfirmPassword)
+            {
+                _logger.LogWarning("Passwords do not match for user: {Email}", registrationModel.Email.Replace("\r", "").Replace("\n", ""));
+                ModelState.AddModelError(string.Empty, "Passwords do not match.");
+            }
+
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Model state is invalid for user: {Email}", registrationModel.Email.Replace("\r", "").Replace("\n", ""));
                 return View(registrationModel);
             }
+
 
             ApplicationUser user = new ApplicationUser
             {
@@ -55,7 +63,6 @@ namespace TMS_IDP.Controllers
 
             _logger.LogInformation("New user registered: {Email}", registrationModel.Email);
             return RedirectToAction("Login", "Auth", new { registrationModel.ReturnUrl });
-
         }
     }
 }

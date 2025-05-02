@@ -68,6 +68,7 @@ builder.Services.AddIdentityServer(options =>
 {
     options.UserInteraction.LoginUrl = "/auth/login";
     options.UserInteraction.LogoutUrl = "/auth/logout";
+    options.UserInteraction.CreateAccountUrl = "/auth/register";
 })
 .AddAspNetIdentity<ApplicationUser>()
 .AddConfigurationStore(options =>
@@ -126,13 +127,6 @@ builder.Services.AddAuthentication(options =>
         },
     };
 });
-
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("ApiScope", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "api1.read");
-    });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

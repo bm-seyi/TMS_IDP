@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TMS_IDP.Models.ViewModel
 {
-    public class RegistrationViewModel
+    public class RegisterViewModel
     {
 
         [Required(ErrorMessage = "Email is required")]

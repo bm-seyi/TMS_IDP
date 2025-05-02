@@ -496,7 +496,7 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Input validation with `ModelState.IsValid` and form model binding for login and registration views.
 - `Register` GET and POST routes with anti-forgery protection.
 
-### Fixed / Updated
+### Fixed/Updated
 - Changed `RegistrationController` from API-based (`ControllerBase`) to MVC-based (`Controller`) to support views.
 - Refactored model usage: replaced `TMS_IDP.Models.Controllers` with `TMS_IDP.Models.ViewModel`.
 - Improved login flow in `AuthController` to validate model state and return the view with input data on failure.
@@ -505,3 +505,16 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 ### Removed
 - Deleted obsolete `AccountModel.cs` and `RegistrationModel.cs` under `TMS_IDP.Models.Controllers`.
 - Removed unused usings and API rate limiting from `RegistrationController`.
+
+## 0.7.3
+### Added
+- Added `CreateAccountUrl` configuration in IdentityServer setup to support direct navigation to registration page.
+
+### Fixed/Updated
+- Updated `RegistrationController` to use `RegisterViewModel` instead of the deleted `RegistrationViewModel`.
+- Improved registration logic by adding password confirmation check with logging for mismatches and invalid submissions.
+- Cleaned up spacing and formatting in `CertificateService.cs`.
+
+### Removed
+- Deleted `RegistrationViewModel.cs` from `TMS_IDP.Models.ViewModel` in favor of `RegisterViewModel`.
+- Removed unused authorization policy for `ApiScope` in `Program.cs`.
