@@ -519,6 +519,36 @@ Corrected additional changes from CodeQL, refresh tokens aren't provided as plai
 - Deleted `RegistrationViewModel.cs` from `TMS_IDP.Models.ViewModel` in favor of `RegisterViewModel`.
 - Removed unused authorization policy for `ApiScope` in `Program.cs`.
 
+
 ## 0.7.4
 ### Fixed/Updated
 - Sanitized email input in registration logging to prevent newline injection (`\r`, `\n`) vulnerabilities in `RegistrationController`.
+
+
+## 0.7.5
+### Added
+- Added DotNetEnv package for environment variable management in development
+- Added explicit content inclusion for `appsettings.json` with copy to output directory setting
+- Added debug configuration to load `.env` file from project root during development
+
+### Fixed/Updated
+- Updated `IdentityServerModel` properties to use `required` modifier and nullable types where appropriate
+  - Made `DisplayName`, `Description`, and `UserClaims` nullable in `IdentityResourceModel`
+  - Changed `AllowedCorsOrigins` to initialize with empty list by default
+- Updated Program.cs configuration:
+  - Improved connection string retrieval from configuration
+  - Changed IdentityServerModel registration to use Options pattern
+  - Added better error handling for parent directory detection in debug mode
+- Updated Seeder.cs:
+  - Added check for relational database before seeding
+  - Improved null handling for UserClaims
+  - Made variable declarations more explicit
+- Updated appsettings.json structure:
+  - Changed Clients from object to array
+  - Updated redirect URIs format
+  - Changed enum values from strings to integers for RefreshTokenUsage/Expiration
+
+### Removed
+- Removed unused `using Duende.IdentityServer.EntityFramework.Entities` from IdentityServerModel.cs
+- Removed manual instantiation of empty lists in IdentityServerModel properties
+- Removed redundant blank line at start of IdentityServerModel.cs

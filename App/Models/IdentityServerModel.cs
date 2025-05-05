@@ -1,14 +1,13 @@
-
-using Duende.IdentityServer.EntityFramework.Entities;
+using System.Text.Json.Serialization;
 
 namespace TMS_SEED.Models
 {
     public class IdentityServerModel
     {
-        public List<ClientModel> Clients { get; set; } = new List<ClientModel>();
-        public List<ApiScopeModel> ApiScopes { get; set; } = new List<ApiScopeModel>();
-        public List<IdentityResourceModel> IdentityResources { get; set; } = new List<IdentityResourceModel>();
-        public List<ApiResourceModel> ApiResources { get; set; } = new List<ApiResourceModel>();
+        public required List<ClientModel> Clients { get; set; }
+        public required List<ApiScopeModel> ApiScopes { get; set; }
+        public required List<IdentityResourceModel> IdentityResources { get; set; }
+        public required List<ApiResourceModel> ApiResources { get; set; }
 
     }
 
@@ -19,7 +18,7 @@ namespace TMS_SEED.Models
         public bool RequireClientSecret { get; set; }
         public required List<string> RedirectUris { get; set; }
         public required List<string> PostLogoutRedirectUris { get; set; }
-        public required List<string> AllowedCorsOrigins { get; set; }
+        public List<string> AllowedCorsOrigins { get; set; } = new List<string>();
         public required List<string> AllowedScopes { get; set; }
         public bool AllowOfflineAccess { get; set; }
         public required List<string> AllowedGrantTypes { get; set; }
@@ -44,10 +43,10 @@ namespace TMS_SEED.Models
     public class IdentityResourceModel
     {
         public required string Name { get; set; }
-        public required string DisplayName { get; set; }
-        public required string Description { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Description { get; set; }
         public bool Required { get; set; }
-        public required List<string> UserClaims { get; set; }
+        public List<string>? UserClaims { get; set; }
     }
 
     public class ApiResourceModel
