@@ -7,18 +7,34 @@ using TMS_MIGRATE.DbContext;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
+#if DEBUG
+string? parentDirectory = Directory.GetParent(Environment.CurrentDirectory)?.FullName;
+if (string.IsNullOrWhiteSpace(parentDirectory))
+{
+    throw new DirectoryNotFoundException("Parent directory not found.");
+}
+
+string projectRoot = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", ".env"));
+
+DotNetEnv.Env.Load(projectRoot);
+#endif
+
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((context, config) =>
-    {
-        // Optional: extra config setup if you need
-        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
+    {   
+        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddEnvironmentVariables();
     })
     .ConfigureServices((context, services) =>
     {
         IConfiguration configuration = context.Configuration;
 
-        string? connectionString = configuration.GetConnectionString("ConfigurationDb");
+        string? connectionString = configuration["ConnectionStrings:ConfigurationDb"];
         if (string.IsNullOrWhiteSpace(connectionString))
         {
             Console.WriteLine("Connection string 'ConfigurationDb' not found in appsettings.json or environment variables.");
@@ -45,9 +61,8 @@ var host = Host.CreateDefaultBuilder(args)
         // Register your Seeder class
         services.AddTransient<ISeeder, Seeder>();
 
-        IdentityServerModel identityServerModel = new IdentityServerModel();
-        configuration.GetSection("IdentityServer").Bind(identityServerModel);
-        services.AddSingleton(identityServerModel);
+        services.Configure<IdentityServerModel>(configuration.GetSection("IdentityServer"))
+            .AddSingleton(resolver => resolver.GetRequiredService<IOptions<IdentityServerModel>>().Value);
     })
     .Build();
 
@@ -57,7 +72,7 @@ using (var scope = host.Services.CreateAsyncScope())
 
     try
     {
-        var seeder = services.GetRequiredService<Seeder>();
+        ISeeder seeder = services.GetRequiredService<ISeeder>();
         await seeder.SeedAsync();
         Console.WriteLine("Database seeding completed successfully.");
     }
